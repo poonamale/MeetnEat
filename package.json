@@ -21,6 +21,7 @@
     "slackbots": "^1.2.0",
     "@slack/rtm-api": "^5.0.5",
     "@slack/web-api": "^5.10.0",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "dotenv": "^10.0.0"
   }
 }
