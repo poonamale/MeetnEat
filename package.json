@@ -1,0 +1,23 @@
+{
+  "name": "meetneat",
+  "version": "1.0.0",
+  "description": "Slackbot that organises lunch plans",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poonamale/MeetnEat.git"
+  },
+  "author": "AppHackTeam3",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/poonamale/MeetnEat/issues"
+  },
+  "homepage": "https://github.com/poonamale/MeetnEat#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "slackbots": "^1.2.0"
+  }
+}
