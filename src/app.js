@@ -1,29 +1,37 @@
-import { RTMClient }  from '@slack/rtm-api'
-import { SLACK_OAUTH_TOKEN, BOT_SPAM_CHANNEL } from './constants'
-import  { WebClient } from '@slack/web-api'
+import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from './constants'
+const SlackBot = require('slackbots');
 const axios = require('axios')
 const packageJson = require('../package.json')
 
-const rtm = new RTMClient(SLACK_OAUTH_TOKEN)
-const web = new WebClient(SLACK_OAUTH_TOKEN)
-
-rtm.start()
-  .catch(console.error)
-
-rtm.on('ready', async () => {
-    console.log('bot started')
-    console.log(BOT_SPAM_CHANNEL, `Bot version ${packageJson.version} is online.`)
-    createLobby('24 High Street')
-})
-
-rtm.on('slack_event', async (eventType, event) => {
-    if (event && event.type === 'message'){
-        if (event.text === '!hello') {
-            hello(event.channel, event.user)
-        }
+const bot = new SlackBot({
+    token: SLACK_OAUTH_TOKEN,
+    name: 'aaa'
+  });
+  
+  // Start Handler
+  bot.on('start', () => {
+    const params = {
+      icon_emoji: ':smiley:'
+    };
+  
+    bot.postMessageToChannel(
+        BOT_SPAM_CHANNEL,
+      'Lets plan lunch',
+      params
+    );
+  });
+  
+  // Error Handler
+  bot.on('error', err => console.log(err));
+  
+  // Message Handler
+  bot.on('message', data => {
+    if (data.type !== 'message') {
+      return
     }
-})
-
+  
+    handleMessage(data.text)
+  })
 
 function hello (channelId, userId) {
     sendMessage(channelId, `Heya! <@${userId}>`)
@@ -38,9 +46,9 @@ async function sendMessage(channel, message) {
 
 async function createLobby(location) {
     try {
-        app.client.admin.conversations.create(token = SLACK_OAUTH_TOKEN.toLowerCase, is_private = true, name = location);
+        app.client.admin.conversations.create(token = SLACK_OAUTH_TOKEN.toLowerCase, is_private = true, name = location)
     } catch (err) {
-        console.log(err.stack);
-        console.log('Unable to process the createLobby request');
+        console.log(err.stack)
+        console.log('Unable to process the createLobby request')
     }
   }
