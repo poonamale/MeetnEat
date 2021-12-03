@@ -1,27 +1,21 @@
-import { RTMClient }  from '@slack/rtm-api'
-import { SLACK_OAUTH_TOKEN, BOT_SPAM_CHANNEL } from './constants'
-import  { WebClient } from '@slack/web-api';
-const axios = require('axios');
+import { SLACK_OAUTH_TOKEN, SLACK_APP_TOKEN, SLACK_SIGNING_SECRET, BOT_SPAM_CHANNEL } from './constants'
+const axios = require('axios')
 const packageJson = require('../package.json')
+const { App } = require('@slack/bolt')
 
-const rtm = new RTMClient(SLACK_OAUTH_TOKEN);
-const web = new WebClient(SLACK_OAUTH_TOKEN);
+// Initializes your app with your bot token and signing secret
+const app = new App({
+  token: process.env.SLACK_OAUTH_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  socketMode: true, 
+  appToken: process.env.SLACK_APP_TOKEN 
+});
 
-rtm.start()
-  .catch(console.error);
-
-rtm.on('ready', async () => {
-    console.log('bot started')
-    sendMessage(BOT_SPAM_CHANNEL, `Bot version ${packageJson.version} is online.`)
-})
-
-rtm.on('slack_event', async (eventType, event) => {
-    if (event && event.type === 'message'){
-        if (event.text === '!hello') {
-            hello(event.channel, event.user)
-        }
-    }
-})
+(async () => {
+  // Start your app
+  await app.start(process.env.PORT || 3000)
+  console.log('⚡️ Bolt app is running!')
+})()
 
 
 function hello (channelId, userId) {

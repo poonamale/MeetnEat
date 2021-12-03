@@ -17,11 +17,12 @@
   },
   "homepage": "https://github.com/poonamale/MeetnEat#readme",
   "dependencies": {
-    "axios": "^0.24.0",
-    "slackbots": "^1.2.0",
+    "@slack/bolt": "^3.8.1",
     "@slack/rtm-api": "^5.0.5",
     "@slack/web-api": "^5.10.0",
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0",
     "esm": "^3.2.25",
-    "dotenv": "^10.0.0"
+    "slackbots": "^1.2.0"
   }
 }
