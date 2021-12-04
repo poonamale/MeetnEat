@@ -56,7 +56,8 @@ function getRestaurantListForHostUI(office, startTime, duration) {
         }
     })
 
-    console.log(restaurantListForHostUI)
+//    console.log(restaurantListForHostUI)
+    return restaurantListForHostUI
 }
 
 function convertTimeFromJson(jsonTime) {
@@ -78,17 +79,27 @@ const userInputDuration = 60
 
 getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration)
 
-// TODO: extract necessary info to send to 'join' UI
-function getRestaurantInfo (locationId) {
+// extract necessary info to send to 'join' UI + use for event
+function getRestaurantInfo (locationId, office) {
     let restaurantInfo = {}
+    const restaurants = getRestaurantsNearOffice(office) // options: Belgrave, Sussex, John_street
+    restaurants.forEach(restaurant => {
+        if (restaurant.location_id === locationId) {
+            restaurantInfo = restaurant
+        }
+    })
 
+    console.log(restaurantInfo)
+    return restaurantInfo
 }
+
+getRestaurantInfo('11711161', 'Belgrave')
 
 
 
 // TODO: Save event after user interaction to json file
 const events = []
 
-function createEvent (restaurantInfo, time, host, members, channelId) {
+function createEvent (restaurantInfo, startTime, duration, host, members, channelId) {
     
 }
