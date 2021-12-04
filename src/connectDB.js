@@ -1,6 +1,6 @@
-import { NAME, PASSWORD, CLUSTER_URL } from "./constants";
-
 const { MongoClient } = require("mongodb");
+
+import { NAME, PASSWORD, CLUSTER_URL } from "./constants";
 
 export async function createConnection() {
   // code to connect to db
@@ -10,16 +10,15 @@ export async function createConnection() {
     useUnifiedTopology: true,
   });
   try {
-    let connectedClient = await client.connect();
-
-    console.log(
-      "database connected " + connectedClient.db().admin().listDatabases()
-    );
+    let connectClient = await client.connect();
+    console.log(connectClient.topology.isConnected);
   } catch (e) {
     // perform actions on the collection object
+    console.log("\n ------- mongodb error ----- \n");
     console.error(e);
     client.close();
   } finally {
+    console.log("closing db connection");
     await client.close();
   }
 }

@@ -1,15 +1,15 @@
-import { RTMClient } from "@slack/rtm-api";
 import { SLACK_OAUTH_TOKEN, BOT_SPAM_CHANNEL, BOT_NAME } from "./constants";
-import { WebClient } from "@slack/web-api";
 import { createConnection } from "./connectDB";
+const { WebClient, LogLevel } = require("@slack/web-api");
+const { App } = require("@slack/bolt");
 const axios = require("axios");
 const packageJson = require("../package.json");
 const SlackBot = require("slackbots");
-const axios = require("axios");
-const packageJson = require("../package.json");
-const { App } = require("@slack/bolt");
+
+//connect to db
+createConnection();
+
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
-const { WebClient, LogLevel } = require("@slack/web-api");
 
 // WebClient insantiates a client that can call API methods
 // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
