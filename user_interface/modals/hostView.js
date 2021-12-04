@@ -20,7 +20,10 @@ export function BLOCK_HOST_VIEW(message) {
           value: "click_me_123",
           action_id: "action-for-host",
         },
+<<<<<<< HEAD
         i,
+=======
+>>>>>>> main
       ],
     },
     {
