@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import { SLACK_OAUTH_TOKEN, BOT_SPAM_CHANNEL, BOT_NAME } from "./constants";
-import { createConnection } from "./connectDB";
-=======
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 const SlackBot = require("slackbots");
 const axios = require("axios");
@@ -9,7 +5,6 @@ const packageJson = require("../package.json");
 const { App } = require("@slack/bolt");
 import { BLOCK_HOST_VIEW } from "../user_interface/modals/hostView";
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
->>>>>>> main
 const { WebClient, LogLevel } = require("@slack/web-api");
 const { App } = require("@slack/bolt");
 const axios = require("axios");
@@ -41,41 +36,6 @@ const app = new App({
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
   var appHackTeam3 = "U02NLRLKX0X, U02NYD1G8TY, U02PW25QJ1W, U02PSK9CK5W";
-<<<<<<< HEAD
-  createLobby("Sorry Final Test I Swear", appHackTeam3);
-})();
-
-function hello(channelId, userId) {
-  sendMessage(channelId, `Heya! <@${userId}>`);
-}
-
-async function sendMessage(channel, message) {
-  await web.chat.postMessage({
-    channel: channel,
-    text: message,
-  });
-}
-
-async function createLobby(location, host) {
-  location = location.toLowerCase();
-  location = location.replace(/ /g, "");
-  var channel_id;
-  console.log(location + " lobby was created!");
-  try {
-    const result = await client.conversations.create({
-      token: SLACK_OAUTH_TOKEN,
-      name: location,
-      is_private: true,
-    });
-    channel_id = result.channel.id;
-  } catch (err) {
-    console.log("Unable to process the createLobby request");
-    console.error("Reason: " + err.data.error);
-  }
-  inviteToLobby(channel_id, host);
-}
-
-=======
   //createLobby('Sorry Final Test I Swear', appHackTeam3)
   //sendMessage(general, "Would you like to Host or Join?")
 })();
@@ -263,7 +223,6 @@ async function createLobby(location, host) {
   inviteToLobby(channel_id, host);
 }
 
->>>>>>> main
 async function inviteToLobby(channel_id, users) {
   try {
     const result = await client.conversations.invite({
