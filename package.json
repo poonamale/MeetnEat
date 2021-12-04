@@ -23,6 +23,7 @@
     "dotenv": "^10.0.0",
     "esm": "^3.2.25",
     "fs": "^0.0.1-security",
+    "mongodb": "^4.2.1",
     "slackbots": "^1.2.0"
   }
 }
