@@ -134,7 +134,10 @@ func apiCallForRestaurantsByLocation(lat, lon float64, fileName string) {
 	}
 	apiKey := os.Getenv("TRAVEL_ADVISOR_API_KEY")
 
-	url := fmt.Sprintf("https://travel-advisor.p.rapidapi.com/restaurants/list-by-latlng?latitude=%f&longitude=%f&distance=1&lunit=mi", lat, lon)
+	url := fmt.Sprintf("https://travel-advisor.p.rapidapi.com/restaurants/list-by-latlng?latitude=%f&longitude=%f&distance=1&lunit=mi&min_rating=min%203", lat, lon)
+
+	//Url for call to get next page of restaurants
+	//url := "https://travel-advisor.p.rapidapi.com/restaurants/list-by-latlng?latitude=51.49503669003621&longitude=-0.14656206805342872&distance=1&offset=30&lunit=mi&min_rating=min%203"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
