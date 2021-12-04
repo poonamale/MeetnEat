@@ -38,7 +38,7 @@ function getRestaurantListForHostUI(office, startTime, duration) {
                 const openTime = convertTimeFromJson(open.open_time).getTime()
                 const closeTime = convertTimeFromJson(open.close_time).getTime()
 
-                if (openTime <= startTime) {
+                if (openTime <= startTime && endTime <= closeTime) {
                     const info = {
                         locationId: restaurant.location_id, 
                         name: restaurant.name, 
@@ -62,6 +62,7 @@ function getRestaurantListForHostUI(office, startTime, duration) {
 function convertTimeFromJson(jsonTime) {
     const hour = Math.floor(jsonTime / 60)
     const minute = (jsonTime / 60 - hour) * 60
+    // TODO: in live version, change the following to new Date()
     const d = new Date(2021, 11, 6, 12, 30, 0, 0)
     const year = d.getFullYear()
     const month = d.getMonth()
