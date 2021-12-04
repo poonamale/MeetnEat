@@ -9,40 +9,77 @@ const { WebClient, LogLevel } = require("@slack/web-api");
 // WebClient insantiates a client that can call API methods
 // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
 const client = new WebClient(SLACK_OAUTH_TOKEN, {
-  // LogLevel can be imported and used to make debugging simpler
-  logLevel: LogLevel.DEBUG
+    // LogLevel can be imported and used to make debugging simpler
+    logLevel: LogLevel.DEBUG
 });
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
-  token: process.env.SLACK_OAUTH_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  socketMode: true, 
-  appToken: process.env.SLACK_APP_TOKEN 
+    token: process.env.SLACK_OAUTH_TOKEN,
+    signingSecret: process.env.SLACK_SIGNING_SECRET,
+    socketMode: true,
+    appToken: process.env.SLACK_APP_TOKEN
 });
 
 (async () => {
-  // Start your app
-  await app.start(process.env.PORT || 3000)
-  console.log('⚡️ Bolt app is running!')
-  var appHackTeam3 = 'U02NLRLKX0X, U02NYD1G8TY, U02PW25QJ1W, U02PSK9CK5W'
-  createLobby('Sorry Final Test I Swear', appHackTeam3)
+    // Start your app
+    await app.start(process.env.PORT || 3000)
+    console.log('⚡️ Bolt app is running!')
+    var appHackTeam3 = 'U02NLRLKX0X, U02NYD1G8TY, U02PW25QJ1W, U02PSK9CK5W'
+    //createLobby('Sorry Final Test I Swear', appHackTeam3)
+    //sendMessage(general, "Would you like to Host or Join?")
+
 })()
 
-function hello (channelId, userId) {
-    sendMessage(channelId, `Heya! <@${userId}>`)
-}
-
-async function sendMessage(channel, message) {
-    await web.chat.postMessage({
-        channel: channel,
-        text: message,
-    })
-}
+app.message('hello', async ({ message, say }) => {
+    // say() sends a message to the channel where the event was triggered
+    await say({
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": `Hey there <@${message.user}>! Would you like to host or join?`,
+                }
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Host",
+                            "emoji": true
+                        },
+                        "value": "click_me_123",
+                        "action_id": "actionId-0"
+                    }
+                ]
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Join",
+                            "emoji": true
+                        },
+                        "value": "click_me_123",
+                        "action_id": "actionId-0"
+                    }
+                ]
+            }
+        ],
+        text: `Hey there <@${message.user}>!`
+    });
+});
 
 async function createLobby(location, host) {
     location = location.toLowerCase()
-    location = location.replace(/ /g,'')
+    location = location.replace(/ /g, '')
     var channel_id
     console.log(location + ' lobby was created!')
     try {
@@ -57,9 +94,9 @@ async function createLobby(location, host) {
         console.error('Reason: ' + err.data.error)
     }
     inviteToLobby(channel_id, host)
-  }
+}
 
-  async function inviteToLobby(channel_id, users) {
+async function inviteToLobby(channel_id, users) {
 
 
     try {
@@ -72,4 +109,4 @@ async function createLobby(location, host) {
         console.log('Unable to process the inviteToLobby request')
         console.error('Reason: ' + err.data.error)
     }
-  }
+}
