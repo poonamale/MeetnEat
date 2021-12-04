@@ -12,6 +12,7 @@ rtm.start().catch(console.error);
 
 rtm.on("ready", async () => {
   console.log("bot started");
+  createConnection();
   sendMessage(
     BOT_SPAM_CHANNEL,
     `Bot version ${packageJson.version} is online.`
