@@ -63,7 +63,7 @@ function getRestaurantListForHostUI(office, startTime, duration) {
 function convertTimeFromJson(jsonTime) {
     const hour = Math.floor(jsonTime / 60)
     const minute = (jsonTime / 60 - hour) * 60
-    // TODO: in live version, change the following to new Date()
+    // TODO: in live version, change the following to new Date() !!!!!!
     const d = new Date(2021, 11, 6, 12, 30, 0, 0)
     const year = d.getFullYear()
     const month = d.getMonth()
@@ -95,11 +95,29 @@ function getRestaurantInfo (locationId, office) {
 
 getRestaurantInfo('11711161', 'Belgrave')
 
+// Save event after user interaction to send it to mongoDB
+function createEvent(restaurantInfo, startTime, duration, host, channelId) {
+    const event = {
+        restaurantInfo: restaurantInfo,
+        startTime: startTime,
+        duration: duration,
+        host: host,
+        members: [],
+        channelId: channelId
+    }
 
+    return event
+}
 
-// TODO: Save event after user interaction to json file
-const events = []
+// add new member to channel to send it to mongoDB
+function addMemberToChannel(memberId, channelId) {
+    const channelInfo = getChannelInfoById(channelId)
+    channelInfo.members.push(memberId)
 
-function createEvent (restaurantInfo, startTime, duration, host, members, channelId) {
+    return channelInfo
+}
+
+// TODO: get channel info from mongoDB
+function getChannelInfoById(channelId) {
     
 }
