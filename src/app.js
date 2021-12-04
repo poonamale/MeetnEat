@@ -1,14 +1,11 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_HOST_VIEW } from "../user_interface/modals/hostView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
-const SlackBot = require("slackbots");
-const axios = require("axios");
-const packageJson = require("../package.json");
+import { createConnection } from "./connectDB";
 const { App } = require("@slack/bolt");
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
 const { WebClient, LogLevel } = require("@slack/web-api");
-const { App } = require("@slack/bolt");
 const axios = require("axios");
 const packageJson = require("../package.json");
 const SlackBot = require("slackbots");
@@ -57,7 +54,7 @@ app.action("action-for-host", async ({ body, ack, client }) => {
     // Call the views.open method using the WebClient passed to listeners
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS,
+      view: HOST_OPTIONS(),
     });
 
     console.log(result);
