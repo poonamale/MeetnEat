@@ -1,10 +1,10 @@
-export function BLOCK_INIT_VIEW(message) {
+export function BLOCK_INIT_VIEW(user) {
   return [
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `Hey there <@${message.user}>! Would you like to host or join?`,
+        text: `Hey there <@${user}>! Would you like to host or join?`,
       },
     },
     {

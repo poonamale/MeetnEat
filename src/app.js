@@ -4,6 +4,7 @@ import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
 import { getRestaurantsNearOffice } from "./interact_with_json";
+import { LOCATION_PROMPT } from "../user_interface/modals/LocationPrompt";
 
 const { App } = require("@slack/bolt");
 
@@ -45,31 +46,80 @@ const app = new App({
 app.message("hello", async ({ message, say }) => {
   // say() sends a message to the channel where the event was triggered
   await say({
-    blocks: BLOCK_INIT_VIEW(message),
+    blocks: LOCATION_PROMPT(),
     text: `Hey there <@${message.user}>!`,
   });
 });
+
+app.message("eat", async ({ message, say }) => {
+  await say({
+    blocks: LOCATION_PROMPT(),
+    text: `choose a location ${message}`,
+  });
+});
+
+app.action("action-for-belgrave", async ({ body, ack, client }) => {
+  console.log("triggered belgrave action");
+  console.log(body);
+  const result = await client.chat.postMessage({
+    blocks: BLOCK_INIT_VIEW(body.user.name),
+    text: "choose host or join",
+    channel: body.channel.id,
+  });
+});
+
+app.action("action-for-john", async ({ body, ack, client }) => {
+  console.log("triggered john action");
+  console.log(body);
+  const result = await client.chat.postMessage({
+    blocks: BLOCK_INIT_VIEW(body.user.name),
+    text: "choose host or join",
+    channel: body.channel.id,
+  });
+});
+
+app.action("action-for-sussex", async ({ body, ack, client }) => {
+  console.log("triggered sussex action");
+  console.log(body);
+  const result = await client.chat.postMessage({
+    blocks: BLOCK_INIT_VIEW(body.user.name),
+    text: "choose host or join",
+    channel: body.channel.id,
+  });
+});
+
+async function hostOrJoinOption(name) {
+  return {
+    blocks: BLOCK_INIT_VIEW(name),
+    text: "get loc",
+  };
+}
+
+// app.action("action-for-sussex");
+// app.action("action-for-john");
 
 app.action("action-for-host", async ({ body, ack, client }) => {
   // Acknowledge the action
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
-    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
-    const nameAndIDOfFoodPlace = [];
-    locationBelgrave.forEach((element, index) => {
-      nameAndIDOfFoodPlace.push({
-        text: {
-          type: "plain_text",
-          text: `${element.name}-${element.location_id}`,
-          emoji: true,
-        },
-        value: `value-${index}`,
-      });
-    });
+    // const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+    // const nameAndIDOfFoodPlace = [];
+    // locationBelgrave.forEach((element, index) => {
+    //   nameAndIDOfFoodPlace.push({
+    //     text: {
+    //       type: "plain_text",
+    //       text: `${element.name}-${element.location_id}`,
+    //       emoji: true,
+    //     },
+    //     value: `value-${index}`,
+    //   });
+    // });
+
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS(nameAndIDOfFoodPlace),
+      // HOST_OPTIONS(nameAndIDOfFoodPlace)
+      view: LOCATION_PROMPT(),
     });
 
     console.log(locationBelgrave);
@@ -84,21 +134,22 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   } catch (error) {
     console.error(error);
   }
-  clientDataBase.close();
 });
 
-app.view('host_view_1', async ({ ack, body, view, context }) => {
+app.view("host_view_1", async ({ ack, body, view, context }) => {
   // Acknowledge the view_submission event
   ack();
 
-  const selectedTime = view['state']['values']['time_input']['timepicker-action'];
-  const selectedDuration = view['state']['values']['duration_input']['static_select-action'];
-  const user = body['user']['id'];
-  
+  const selectedTime =
+    view["state"]["values"]["time_input"]["timepicker-action"];
+  const selectedDuration =
+    view["state"]["values"]["duration_input"]["static_select-action"];
+  const user = body["user"]["id"];
+
   //probably want to store these values somewhere
   console.log(selectedTime);
   console.log(selectedDuration);
-  console.log("user_id:",user);
+  console.log("user_id:", user);
 
   //Passing the host restaurant view after time and duration is stored
   try {
