@@ -1,6 +1,7 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_INIT_VIEW } from "../user_interface/modals/InitialView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
+import { HOST_RESTAURANT } from "../user_interface/modals/HostRestaurant";
 import { createConnection } from "./connectDB";
 const { App } = require("@slack/bolt");
 
@@ -80,7 +81,7 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
   try {
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS(),
+      view: HOST_RESTAURANT(),
     });
 
     console.log(result);
