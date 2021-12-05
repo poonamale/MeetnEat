@@ -61,12 +61,13 @@ function getRestaurantListForHostUI(office, startTimeString, durationString) {
             address: restaurant.address,
             openTime: new Date(openTime).toTimeString(),
             closeTime: new Date(closeTime).toTimeString(),
-            distance: restaurant.distance_string,
             walkTime: walkTime,
             cuisine: restaurant.cuisine[0]
               ? restaurant.cuisine[0].name
               : "unknown",
-          };
+            photo: restaurant.photo.images.large.url,
+            dietaryRestrictions : restaurant.dietary_restrictions
+          }
           restaurantListForHostUI.push(info);
         }
       });
