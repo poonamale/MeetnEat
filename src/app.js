@@ -3,6 +3,8 @@ import { BLOCK_HOST_VIEW } from "../user_interface/modals/hostView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
 import { saveNewUser } from "./Database/Crud";
 import { createClient } from "./Database/connectDB";
+import { postLocationData } from "./Database/Crud";
+import { getRestaurantsNearOffice } from "./interact_with_json";
 const { App } = require("@slack/bolt");
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
@@ -57,7 +59,11 @@ app.action("action-for-host", async ({ body, ack, client }) => {
       trigger_id: body.trigger_id,
       view: HOST_OPTIONS(),
     });
-    await saveNewUser(clientDataBase, "fake user 123");
+    // await saveNewUser(clientDataBase, "fake user 123");
+    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+    // const locationSussex = getRestaurantsNearOffice("Sussex");
+    // const locationJohn_Street = getRestaurantsNearOffice("John_Street");
+    await postLocationData(clientDataBase, "Belgrave", locationBelgrave);
   } catch (error) {
     console.error(error);
   }
