@@ -1,6 +1,7 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_INIT_VIEW } from "../user_interface/modals/InitialView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
+import { HOST_RESTAURANT } from "../user_interface/modals/HostRestaurant";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
 import {
@@ -9,6 +10,7 @@ import {
 } from "./interact_with_json";
 import { LOCATION_PROMPT } from "../user_interface/modals/LocationPrompt";
 import { BLOCK_JOIN_VIEW } from "../user_interface/modals/joinView";
+import { getRestaurantListForHostUI } from "./interact_with_json";
 
 const { App } = require("@slack/bolt");
 
@@ -120,18 +122,8 @@ app.action("action-for-host", async ({ body, ack, client }) => {
 
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS(nameAndIDOfFoodPlace),
+      view: HOST_OPTIONS(),
     });
-
-    console.log(locationBelgrave);
-
-    // const locationSussex = getRestaurantsNearOffice("Sussex");
-    // const locationJohn_Street = getRestaurantsNearOffice("John_Street");
-    // const res = await postLocationData(
-    //   clientDataBase,
-    //   "Belgrave",
-    //   locationBelgrave
-    // );
   } catch (error) {
     console.error(error);
   }
@@ -154,12 +146,80 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
 
   //Passing the host restaurant view after time and duration is stored
   try {
+    const allOpenRestaurants = getRestaurantListForHostUI(
+      "Belgrave",
+      selectedTime.selected_time,
+      selectedDuration.selected_option.text.text
+    );
+    const restaurantDetails = [];
+    //const photoUrl = belgrave_rest.data.photo.large.url
+    allOpenRestaurants.forEach((element, index) => {
+      restaurantDetails.push(
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `*${element.name}*\n${element.address}`,
+          },
+          accessory: {
+            type: "image",
+            image_url: `${element.photo}`,
+            alt_text: "photo of restaurant",
+          },
+        },
+        {
+          type: "context",
+          elements: [
+            {
+              type: "mrkdwn",
+              text: `Walk time: ${element.walkTime} mins`,
+            },
+            {
+              type: "mrkdwn",
+              text: "|",
+            },
+            {
+              type: "mrkdwn",
+              text: `Cuisine: ${element.cuisine}`,
+            },
+          ],
+        },
+        {
+          type: "actions",
+          elements: [
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "Choose",
+                emoji: true,
+              },
+              value: `${index}`,
+            },
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "View Details",
+                emoji: true,
+              },
+              value: "click_me_123",
+            },
+          ],
+        },
+        {
+          type: "divider",
+        }
+      );
+    });
+
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS(),
+      view: HOST_RESTAURANT(restaurantDetails),
     });
 
     console.log(result);
+    console.log(allOpenRestaurants);
   } catch (error) {
     console.error(error);
   }

@@ -1,4 +1,4 @@
-export function HOST_OPTIONS(ArrayOfPlaces) {
+export function HOST_OPTIONS() {
   return {
     type: "modal",
     callback_id: "host_view_1",
@@ -31,12 +31,20 @@ export function HOST_OPTIONS(ArrayOfPlaces) {
             text: "Select time",
             emoji: true,
           },
+<<<<<<< HEAD
           action_id: "timepicker-action",
         },
         label: {
           type: "plain_text",
           text: "Select a Start Time",
           emoji: true,
+=======
+          "label": {
+            "type": "plain_text",
+            "text": "Select a Start Time",
+            "emoji": true
+          }
+>>>>>>> host-restaurant-view
         },
       },
       {
@@ -72,6 +80,7 @@ export function HOST_OPTIONS(ArrayOfPlaces) {
                 text: "90 Minutes",
                 emoji: true,
               },
+<<<<<<< HEAD
               value: "value-2",
             },
           ],
@@ -86,3 +95,25 @@ export function HOST_OPTIONS(ArrayOfPlaces) {
     ],
   };
 }
+=======
+              {
+                "text": {
+                  "type": "plain_text",
+                  "text": "90 Minutes",
+                  "emoji": true
+                },
+                "value": "value-2"
+              }
+            ],
+            "action_id": "static_select-action"
+          },
+          "label": {
+            "type": "plain_text",
+            "text": "Choose a Duration",
+            "emoji": true
+          }
+        }
+      ]
+    }
+}
+>>>>>>> host-restaurant-view
