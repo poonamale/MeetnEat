@@ -1,4 +1,4 @@
-export function HOST_OPTIONS(ArrayOfPlaces) {
+export function HOST_OPTIONS() {
   return {
       "type": "modal",
       "callback_id": 'host_view_1',

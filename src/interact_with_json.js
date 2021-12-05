@@ -21,7 +21,7 @@ export function getRestaurantsNearOffice(office) {
 }
 
 // restaurant list to send to 'host' UI
-function getRestaurantListForHostUI(office, startTimeString, durationString) {
+export function getRestaurantListForHostUI(office, startTimeString, durationString) {
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_street
   const duration = durationString.split(" ")[0];
   const startHourByUser = startTimeString.split(":")[0];

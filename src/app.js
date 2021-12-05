@@ -1,9 +1,10 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_INIT_VIEW } from "../user_interface/modals/InitialView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
+import { HOST_RESTAURANT } from "../user_interface/modals/HostRestaurant";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
-import { getRestaurantsNearOffice } from "./interact_with_json";
+import { getRestaurantListForHostUI } from "./interact_with_json";
 
 const { App } = require("@slack/bolt");
 
@@ -55,32 +56,11 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
-    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
-    const nameAndIDOfFoodPlace = [];
-    locationBelgrave.forEach((element, index) => {
-      nameAndIDOfFoodPlace.push({
-        text: {
-          type: "plain_text",
-          text: `${element.name}-${element.location_id}`,
-          emoji: true,
-        },
-        value: `value-${index}`,
-      });
-    });
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS(nameAndIDOfFoodPlace),
+      view: HOST_OPTIONS(),
     });
 
-    console.log(locationBelgrave);
-
-    // const locationSussex = getRestaurantsNearOffice("Sussex");
-    // const locationJohn_Street = getRestaurantsNearOffice("John_Street");
-    // const res = await postLocationData(
-    //   clientDataBase,
-    //   "Belgrave",
-    //   locationBelgrave
-    // );
   } catch (error) {
     console.error(error);
   }
@@ -102,20 +82,23 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
 
   //Passing the host restaurant view after time and duration is stored
   try {
-    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+    const allOpenRestaurants = getRestaurantListForHostUI("Belgrave", selectedTime.selected_time, selectedDuration.selected_option.text.text)
     const restaurantDetails = [];
-    locationBelgrave.forEach((element, index) => {
-      restaurantDetails.push({
-        "text": {
-          "type": "mrkdwn",
-          "text": ` ${element.name} \n*Share with another person*. Private walk-in bathroom. TV. Heating. Kitchen with microwave, basic cooking utensils, wine glasses and silverware.`
+    //const photoUrl = belgrave_rest.data.photo.large.url
+    allOpenRestaurants.forEach((element, index) => {
+      restaurantDetails.push(
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": `*${element.name}*\n*Share with another person*. Private walk-in bathroom. TV. `
+          },
+          "accessory": {
+            "type": "image",
+            "image_url": "https://media-cdn.tripadvisor.com/media/photo-w/08/5f/23/ab/mi-casa-burritos.jpg",
+            "alt_text": "Airstream Suite"
+          }
         },
-        "accessory": {
-          "type": "image",
-          "image_url": "https://api.slack.com/img/blocks/bkb_template_images/Streamline-Beach.png",
-          "alt_text": "Airstream Suite"
-        }
-      },
         {
           "type": "context",
           "elements": [
@@ -143,7 +126,7 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
                 "text": "Choose",
                 "emoji": true
               },
-              "value": "click_me_123"
+              "value": `${index}`
             },
             {
               "type": "button",
@@ -164,10 +147,11 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
 
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_RESTAURANT(),
+      view: HOST_RESTAURANT(restaurantDetails),
     });
 
     console.log(result);
+    console.log(allOpenRestaurants);
   } catch (error) {
     console.error(error);
   }
