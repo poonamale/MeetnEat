@@ -1,4 +1,4 @@
-export function BLOCK_HOST_VIEW(message) {
+export function BLOCK_INIT_VIEW(message) {
   return [
     {
       type: "section",

@@ -1,5 +1,5 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
-import { BLOCK_HOST_VIEW } from "../user_interface/modals/hostView";
+import { BLOCK_INIT_VIEW } from "../user_interface/modals/InitialView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
@@ -45,7 +45,7 @@ const app = new App({
 app.message("hello", async ({ message, say }) => {
   // say() sends a message to the channel where the event was triggered
   await say({
-    blocks: BLOCK_HOST_VIEW(message),
+    blocks: BLOCK_INIT_VIEW(message),
     text: `Hey there <@${message.user}>!`,
   });
 });
@@ -85,6 +85,32 @@ app.action("action-for-host", async ({ body, ack, client }) => {
     console.error(error);
   }
   clientDataBase.close();
+});
+
+app.view('host_view_1', async ({ ack, body, view, context }) => {
+  // Acknowledge the view_submission event
+  ack();
+
+  const selectedTime = view['state']['values']['time_input']['timepicker-action'];
+  const selectedDuration = view['state']['values']['duration_input']['static_select-action'];
+  const user = body['user']['id'];
+  
+  //probably want to store these values somewhere
+  console.log(selectedTime);
+  console.log(selectedDuration);
+  console.log("user_id:",user);
+
+  //Passing the host restaurant view after time and duration is stored
+  try {
+    const result = await client.views.open({
+      trigger_id: body.trigger_id,
+      view: HOST_OPTIONS(),
+    });
+
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 async function createLobby(location, host) {
