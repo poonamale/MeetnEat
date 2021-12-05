@@ -1,4 +1,4 @@
-export function HOST_OPTIONS() {
+export function HOST_OPTIONS(ArrayOfPlaces) {
   return {
     title: {
       type: "plain_text",
@@ -104,32 +104,7 @@ export function HOST_OPTIONS() {
             text: "Select a Restaurant",
             emoji: true,
           },
-          options: [
-            {
-              text: {
-                type: "plain_text",
-                text: "*this is plain_text text*",
-                emoji: true,
-              },
-              value: "value-0",
-            },
-            {
-              text: {
-                type: "plain_text",
-                text: "*this is plain_text text*",
-                emoji: true,
-              },
-              value: "value-1",
-            },
-            {
-              text: {
-                type: "plain_text",
-                text: "*this is plain_text text*",
-                emoji: true,
-              },
-              value: "value-2",
-            },
-          ],
+          options: ArrayOfPlaces,
           action_id: "static_select-action",
         },
         label: {
