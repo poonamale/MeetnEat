@@ -19,19 +19,28 @@ export async function saveNewUser(client, user_id) {
 
 export async function postLocationData(client, locationName, locationJson) {
   try {
-    console.log(`saving location ${locationJson}`);
     await client.connect();
-    const result = await client
-      .db("MeetNEat")
-      .collection(locationName)
-      .insertMany(locationJson);
-    console.log(` locations added: ${locationJson}`);
+    console.log(`saving location ${locationJson}`);
+
+    await locationJson.forEach((element) => {
+      InsertOne(client, locationName, element.location_id, element);
+      console.log(`item added: ${element}`);
+    });
   } catch (e) {
     // perform actions on the collection object
     console.log("\n ------- mongodb error ----- \n");
     console.error(e);
     client.close();
-  } finally {
-    client.close();
   }
+}
+
+async function InsertOne(client, name, id, item) {
+  await client
+    .db("MeetNEat")
+    .collection(name)
+    .insertOne({ _id: id, data: item });
+}
+
+export async function closeSession(client) {
+  await client.close();
 }

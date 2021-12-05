@@ -1,15 +1,19 @@
 const fs = require("fs");
 
 // Read json file to get restaurants
-require.extensions[".json"] = function (module, filename) {
-  module.exports = fs.readFileSync(filename, "utf8");
-};
+// extractJson();
 
 const offices = ["Belgrave", "Sussex", "John_Street"];
 
+function extractJson(filename) {
+  return fs.readFileSync(filename, "utf8");
+}
+
 export function getRestaurantsNearOffice(office) {
   if (offices.includes(office)) {
-    const restaurantsJson = require(`../restaurant_api/assets/${office}_restaurants.json`);
+    const restaurantsJson = extractJson(
+      `restaurant_api/assets/${office}_restaurants.json`
+    );
     return JSON.parse(restaurantsJson).data;
   } else {
     console.error("Office not included");
@@ -93,7 +97,7 @@ function convertTimeFromJson(jsonTime) {
 const userInputStartTime = "12:30";
 const userInputDuration = "60 Minutes";
 
-getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration);
+// getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration);
 
 // extract necessary info to send to 'join' UI + use for event
 function getRestaurantInfo(locationId, office) {
@@ -109,7 +113,7 @@ function getRestaurantInfo(locationId, office) {
   return restaurantInfo;
 }
 
-getRestaurantInfo("11711161", "Belgrave");
+// getRestaurantInfo("11711161", "Belgrave");
 
 // Save event after user interaction to send it to mongoDB
 function createEvent(restaurantInfo, startTime, duration, host, channelId) {

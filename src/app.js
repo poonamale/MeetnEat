@@ -1,10 +1,10 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_HOST_VIEW } from "../user_interface/modals/hostView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
-import { saveNewUser } from "./Database/Crud";
 import { createClient } from "./Database/connectDB";
-import { postLocationData } from "./Database/Crud";
+import { postLocationData, closeSession } from "./Database/Crud";
 import { getRestaurantsNearOffice } from "./interact_with_json";
+
 const { App } = require("@slack/bolt");
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
@@ -55,18 +55,36 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
+    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+    const nameAndIDOfFoodPlace = [];
+    locationBelgrave.forEach((element, index) => {
+      nameAndIDOfFoodPlace.push({
+        text: {
+          type: "plain_text",
+          text: `${element.name}-${element.location_id}`,
+          emoji: true,
+        },
+        value: `value-${index}`,
+      });
+    });
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS(),
+      view: HOST_OPTIONS(nameAndIDOfFoodPlace),
     });
-    // await saveNewUser(clientDataBase, "fake user 123");
-    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+
+    console.log(locationBelgrave);
+
     // const locationSussex = getRestaurantsNearOffice("Sussex");
     // const locationJohn_Street = getRestaurantsNearOffice("John_Street");
-    await postLocationData(clientDataBase, "Belgrave", locationBelgrave);
+    // const res = await postLocationData(
+    //   clientDataBase,
+    //   "Belgrave",
+    //   locationBelgrave
+    // );
   } catch (error) {
     console.error(error);
   }
+  clientDataBase.close();
 });
 
 async function createLobby(location, host) {
