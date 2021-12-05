@@ -1,6 +1,7 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_INIT_VIEW } from "../user_interface/modals/InitialView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
+import { JOIN_OPTIONS } from "../user_interface/modals/JoinOptions";
 import { HOST_RESTAURANT } from "../user_interface/modals/HostRestaurant";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
@@ -62,8 +63,8 @@ app.message("eat", async ({ message, say }) => {
 });
 
 app.action("action-for-belgrave", async ({ body, ack, client }) => {
+  await ack();
   console.log("triggered belgrave action");
-  console.log(body);
   const result = await client.chat.postMessage({
     blocks: BLOCK_INIT_VIEW(body.user.name),
     text: "choose host or join",
@@ -73,7 +74,6 @@ app.action("action-for-belgrave", async ({ body, ack, client }) => {
 
 app.action("action-for-john", async ({ body, ack, client }) => {
   console.log("triggered john action");
-  console.log(body);
   const result = await client.chat.postMessage({
     blocks: BLOCK_INIT_VIEW(body.user.name),
     text: "choose host or join",
@@ -90,16 +90,6 @@ app.action("action-for-sussex", async ({ body, ack, client }) => {
     channel: body.channel.id,
   });
 });
-
-// async function hostOrJoinOption(name) {
-//   return {
-//     blocks: BLOCK_INIT_VIEW(name),
-//     text: "get loc",
-//   };
-// }
-
-// app.action("action-for-sussex");
-// app.action("action-for-john");
 
 app.action("action-for-host", async ({ body, ack, client }) => {
   // Acknowledge the action
@@ -211,47 +201,69 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
 });
 
 app.action("action-for-join", async ({ body, ack, client }) => {
-  //RESTAURANT_NAME, ADDRESS, WALK_TIME, CUISINE, DIET, START_TIME, DURATION, IMG_URL
-  const listOfRestaurants = getRestaurantListForHostUI(
-    "Belgrave",
-    "12:00",
-    "60 Minutes"
-  );
-  console.log(listOfRestaurants);
-  let RESTAURANT_NAME = "data";
-  let ADDRESS = "data";
-  let WALK_TIME = "5 mins";
-  let CUISINE = "data";
-  let DIET = "data";
-  let START_TIME = "12:00";
-  let DURATION = "60 Minutes";
-  let IMG_URL =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe3EI2njATd0cZQW2BCaksACaJMzs3DKHqqdNqsgibGiapafU0LLuFy7mNx8i0ltnKlhc&usqp=CAU";
+  // Acknowledge the action
   await ack();
   try {
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: BLOCK_JOIN_VIEW(
-        RESTAURANT_NAME,
-        ADDRESS,
-        WALK_TIME,
-        CUISINE,
-        DIET,
-        START_TIME,
-        DURATION,
-        IMG_URL
+      view: JOIN_OPTIONS(),
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.action("actionNext", async ({ body, ack, client }) => {
+  await ack();
+
+  let restaurant = "Vegan Joint";
+  let address = "26 ping road";
+  let distance = "7 mins";
+  let cuisine = "International";
+  let diet = "Vegan Friendly";
+  let start = "12:45";
+  let duration = "60mins";
+  let img =
+    "https://assets3.thrillist.com/v1/image/1682388/size/tl-horizontal_main.jpg";
+  try {
+    const result = await client.views.update({
+      view_id: body.view.root_view_id,
+      state: [
+        restaurant,
+        address,
+        distance,
+        cuisine,
+        diet,
+        start,
+        duration,
+        img,
+      ],
+      view: JOIN_OPTIONS(
+        restaurant,
+        address,
+        distance,
+        cuisine,
+        diet,
+        start,
+        duration,
+        img
       ),
     });
-    console.log(result);
   } catch (err) {
     console.error(err);
   }
 });
 
+app.action("actionJoin", async ({ body, ack, client }) => {
+  await ack();
+
+  let num = `${Math.random()}`.split(".")[0];
+
+  await createLobby("belgrave-food-1230" + `${num}`, body.user.id);
+});
+
 async function createLobby(location, host) {
-  location = location.toLowerCase();
-  location = location.replace(/ /g, "");
-  var channel_id;
+  let channel_id;
   console.log(location + " lobby was created!");
   try {
     const result = await client.conversations.create({
@@ -259,11 +271,13 @@ async function createLobby(location, host) {
       name: location,
       is_private: true,
     });
+    console.log("channel id :" + result.response_metadata);
     channel_id = result.channel.id;
   } catch (err) {
     console.log("Unable to process the createLobby request");
     console.error("Reason: " + err.data.error);
   }
+
   inviteToLobby(channel_id, host);
 }
 
