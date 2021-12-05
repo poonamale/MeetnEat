@@ -8,8 +8,8 @@ const offices = ["Belgrave", "Sussex", "John_Street"];
 function extractJson(filename) {
   return fs.readFileSync(filename, "utf8");
 }
- //if exported, delete ../ ?
-function getRestaurantsNearOffice(office) {
+//if exported, delete ../ ?
+export function getRestaurantsNearOffice(office) {
   if (offices.includes(office)) {
     const restaurantsJson = extractJson(
       `restaurant_api/assets/${office}_restaurants.json`
@@ -21,15 +21,11 @@ function getRestaurantsNearOffice(office) {
 }
 
 // restaurant list to send to 'host' UI
-<<<<<<< HEAD
 export function getRestaurantListForHostUI(
   office,
   startTimeString,
   durationString
 ) {
-=======
-export function getRestaurantListForHostUI(office, startTimeString, durationString) {
->>>>>>> host-restaurant-view
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_street
   const duration = durationString.split(" ")[0];
   const startHourByUser = startTimeString.split(":")[0];
@@ -74,15 +70,15 @@ export function getRestaurantListForHostUI(office, startTimeString, durationStri
               ? restaurant.cuisine[0].name
               : "unknown",
             photo: restaurant.photo.images.large.url,
-            dietaryRestrictions : restaurant.dietary_restrictions
-          }
+            dietaryRestrictions: restaurant.dietary_restrictions,
+          };
           restaurantListForHostUI.push(info);
         }
       });
     }
   });
 
-//  console.log(restaurantListForHostUI);
+  //  console.log(restaurantListForHostUI);
   return restaurantListForHostUI;
 }
 
@@ -105,36 +101,42 @@ const userInputDuration = "60 Minutes";
 
 // extract necessary info to send to 'join' UI + use for event
 function getRestaurantInfo(locationNameAndId, office) {
-  const locationId = locationNameAndId.split("-")[1]
-  let restaurantInfo = {}
+  const locationId = locationNameAndId.split("-")[1];
+  let restaurantInfo = {};
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
   restaurants.forEach((restaurant) => {
     if (restaurant.location_id === locationId) {
-      restaurantInfo = restaurant
+      restaurantInfo = restaurant;
     }
   });
 
-//  console.log(restaurantInfo)
+  //  console.log(restaurantInfo)
   return restaurantInfo;
 }
 
-let eventList = []
+let eventList = [];
 
 // Save event after user interaction to send it to mongoDB
-function createEvent(restaurantInfo, startTimeString, durationString, host, channelId) {
-    const duration = durationString.split(" ")[0];
-    const startHourByUser = startTimeString.split(":")[0];
-    const startMinuteByUser = startTimeString.split(":")[1];
-    const startTime = new Date(
-      2021,
-      11,
-      6,
-      startHourByUser,
-      startMinuteByUser,
-      0,
-      0
-    ).getTime();
-    const event = {
+function createEvent(
+  restaurantInfo,
+  startTimeString,
+  durationString,
+  host,
+  channelId
+) {
+  const duration = durationString.split(" ")[0];
+  const startHourByUser = startTimeString.split(":")[0];
+  const startMinuteByUser = startTimeString.split(":")[1];
+  const startTime = new Date(
+    2021,
+    11,
+    6,
+    startHourByUser,
+    startMinuteByUser,
+    0,
+    0
+  ).getTime();
+  const event = {
     restaurantInfo: restaurantInfo,
     startTime: startTime,
     duration: duration,
@@ -143,8 +145,8 @@ function createEvent(restaurantInfo, startTimeString, durationString, host, chan
     channelId: channelId,
   };
 
-  eventList.push(event)
-//  return event;
+  eventList.push(event);
+  //  return event;
 }
 
 // add new member to channel to send it to mongoDB
@@ -152,18 +154,18 @@ function addMemberToEvent(memberId, channelId) {
   const eventInfo = getChannelInfoById(channelId);
   eventInfo.event.members.push(memberId);
   // replace old event with updated event with new member
-  eventList.splice(eventInfo.position, 1, eventInfo.event)
+  eventList.splice(eventInfo.position, 1, eventInfo.event);
 }
 
 // get channel info from eventList array
 function getChannelInfoById(channelId) {
-    let returnEvent = {}
-    eventList.forEach((event, index) => {
-        if (event.channelId === channelId) {
-            returnEvent = {event: event, position: index}
-        }
-    })
-    return returnEvent
+  let returnEvent = {};
+  eventList.forEach((event, index) => {
+    if (event.channelId === channelId) {
+      returnEvent = { event: event, position: index };
+    }
+  });
+  return returnEvent;
 }
 
 // getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration);

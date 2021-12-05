@@ -10,7 +10,6 @@ import {
 } from "./interact_with_json";
 import { LOCATION_PROMPT } from "../user_interface/modals/LocationPrompt";
 import { BLOCK_JOIN_VIEW } from "../user_interface/modals/joinView";
-import { getRestaurantListForHostUI } from "./interact_with_json";
 
 const { App } = require("@slack/bolt");
 
