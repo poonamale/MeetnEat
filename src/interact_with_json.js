@@ -12,7 +12,7 @@ function extractJson(filename) {
 function getRestaurantsNearOffice(office) {
   if (offices.includes(office)) {
     const restaurantsJson = extractJson(
-      `../restaurant_api/assets/${office}_restaurants.json`
+      `restaurant_api/assets/${office}_restaurants.json`
     );
     return JSON.parse(restaurantsJson).data;
   } else {
@@ -21,13 +21,8 @@ function getRestaurantsNearOffice(office) {
 }
 
 // restaurant list to send to 'host' UI
-<<<<<<< HEAD
 export function getRestaurantListForHostUI(office, startTimeString, durationString) {
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_street
-=======
-function getRestaurantListForHostUI(office, startTimeString, durationString) {
-  const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
->>>>>>> main
   const duration = durationString.split(" ")[0];
   const startHourByUser = startTimeString.split(":")[0];
   const startMinuteByUser = startTimeString.split(":")[1];

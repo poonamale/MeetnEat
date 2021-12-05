@@ -56,21 +56,6 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
-<<<<<<< HEAD
-=======
-    const locationBelgrave = getRestaurantListForHostUI("Belgrave", "12:30", "60 Minutes");
-    const nameAndIDOfFoodPlace = [];
-    locationBelgrave.forEach((element, index) => {
-      nameAndIDOfFoodPlace.push({
-        text: {
-          type: "plain_text",
-          text: `${element.name}-${element.location_id}`,
-          emoji: true,
-        },
-        value: `value-${index}`,
-      });
-    });
->>>>>>> main
     const result = await client.views.open({
       trigger_id: body.trigger_id,
       view: HOST_OPTIONS(),
@@ -106,12 +91,12 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": `*${element.name}*\n*Share with another person*. Private walk-in bathroom. TV. `
+            "text": `*${element.name}*\n${element.address}`
           },
           "accessory": {
             "type": "image",
-            "image_url": "https://media-cdn.tripadvisor.com/media/photo-w/08/5f/23/ab/mi-casa-burritos.jpg",
-            "alt_text": "Airstream Suite"
+            "image_url": `${element.photo}`,
+            "alt_text": "photo of restaurant",
           }
         },
         {
@@ -119,7 +104,7 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
           "elements": [
             {
               "type": "mrkdwn",
-              "text": "1x Queen Bed"
+              "text": `Walk time: ${element.walkTime} mins`
             },
             {
               "type": "mrkdwn",
@@ -127,7 +112,7 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
             },
             {
               "type": "mrkdwn",
-              "text": "$220 / night"
+              "text": `Cuisine: ${element.cuisine}`
             }
           ]
         },
