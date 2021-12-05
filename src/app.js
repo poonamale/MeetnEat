@@ -55,7 +55,7 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
-    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+    const locationBelgrave = getRestaurantListForHostUI("Belgrave", "12:30", "60 Minutes");
     const nameAndIDOfFoodPlace = [];
     locationBelgrave.forEach((element, index) => {
       nameAndIDOfFoodPlace.push({
