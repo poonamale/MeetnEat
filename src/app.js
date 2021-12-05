@@ -62,16 +62,16 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   }
 })
 
-app.action("action-for-join", async ({body, ack, client}) => {
+app.action("action-for-join", async ({body, ack, client, locationNameAndId, office}) => {
     var restaurant = getRestaurantInfo(locationNameAndId, office)
-    let RESTAURANT_NAME
-     ADDRESS = restaurant.ADDRESS
-     WALK_TIME = restaurant.WALK_TIME
-     CUISINE = restaurant.CUISINE
-     DIET = restaurant.DIET
+    let RESTAURANT_NAME = restaurant.name
+     ADDRESS = restaurant.address
+     WALK_TIME = restaurant.walkTime
+     CUISINE = restaurant.cuisine
+     DIET = restaurant.dietary_restrictions
      START_TIME = getLobbyInfo().START_TIME
      DURATION = getLobbyInfo().DURATION
-     IMG_URL = restaurant.IMG_URL
+     IMG_URL = restaurant.photo.images.large.url
     await ack()
     try {
         const result = await client.views.open({
