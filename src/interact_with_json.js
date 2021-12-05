@@ -91,11 +91,6 @@ function convertTimeFromJson(jsonTime) {
   return t;
 }
 
-// TODO: make changes when we know what data arrives from user
-// TODO: make this a function
-const userInputStartTime = "12:30";
-const userInputDuration = "60 Minutes";
-
 // extract necessary info to send to 'join' UI + use for event
 function getRestaurantInfo(locationNameAndId, office) {
   const locationId = locationNameAndId.split("-")[1]
@@ -103,7 +98,36 @@ function getRestaurantInfo(locationNameAndId, office) {
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
   restaurants.forEach((restaurant) => {
     if (restaurant.location_id === locationId) {
-      restaurantInfo = restaurant
+        const d = new Date(2021, 11, 6, 12, 30, 0, 0);
+        const dayOfWeek = d.getDay();
+        let walkTime = 0;
+      if (restaurant.distance_string.split(" ")[1] === "ft") {
+        walkTime = Math.ceil(restaurant.distance_string.split(" ")[0] / 264);
+      } else {
+        walkTime = Math.ceil(restaurant.distance_string.split(" ")[0] / 0.05);
+      }
+
+      let openTime = ""
+      let closeTime = ""
+      restaurant.hours.week_ranges[dayOfWeek].forEach((open) => {
+        openTime += `${convertTimeFromJson(open.open_time).getHours()}:${convertTimeFromJson(open.open_time).getMinutes() === 0 ? '00' : convertTimeFromJson(open.open_time).getMinutes()}, `
+        closeTime += `${convertTimeFromJson(open.close_time).getHours()}:${convertTimeFromJson(open.open_time).getMinutes() === 0 ? '00' : convertTimeFromJson(open.open_time).getMinutes()}, `
+      })
+
+      restaurantInfo = {
+        locationId: restaurant.location_id,
+        name: restaurant.name,
+        address: restaurant.address,
+        openTime: openTime,
+        closeTime: closeTime,
+        walkTime: walkTime,
+        cuisine: restaurant.cuisine[0]
+          ? restaurant.cuisine[0].name
+          : "unknown",
+        photo: restaurant.photo.images.large.url,
+        dietaryRestrictions : restaurant.dietary_restrictions,
+        website: restaurant.website
+      }
     }
   });
 
@@ -159,7 +183,11 @@ function getChannelInfoById(channelId) {
     return returnEvent
 }
 
+
+// const userInputStartTime = "12:30";
+// const userInputDuration = "60 Minutes";
 // getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration);
+console.log(getRestaurantInfo("The Grosvenor Arms-680359", "Belgrave"))
 // const place = getRestaurantInfo("The Grosvenor Arms-11711161", "Belgrave");
 // createEvent(place, userInputStartTime, userInputDuration, "Bori", "someChannelId")
 // addMemberToEvent("Pedro", "someChannelId")
