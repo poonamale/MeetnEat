@@ -1,7 +1,10 @@
 import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_HOST_VIEW } from "../user_interface/modals/hostView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
-import { createConnection } from "./connectDB";
+import { createClient } from "./Database/connectDB";
+import { postLocationData, closeSession } from "./Database/Crud";
+import { getRestaurantsNearOffice } from "./interact_with_json";
+
 const { App } = require("@slack/bolt");
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
@@ -10,8 +13,8 @@ const axios = require("axios");
 const packageJson = require("../package.json");
 const SlackBot = require("slackbots");
 
-//connect to db
-createConnection();
+//create single instance and connect to db
+const clientDataBase = new createClient();
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
 
@@ -52,15 +55,36 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
+    const locationBelgrave = getRestaurantListForHostUI("Belgrave", "12:30", "60 Minutes");
+    const nameAndIDOfFoodPlace = [];
+    locationBelgrave.forEach((element, index) => {
+      nameAndIDOfFoodPlace.push({
+        text: {
+          type: "plain_text",
+          text: `${element.name}-${element.location_id}`,
+          emoji: true,
+        },
+        value: `value-${index}`,
+      });
+    });
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      view: HOST_OPTIONS(),
+      view: HOST_OPTIONS(nameAndIDOfFoodPlace),
     });
 
-    console.log(result);
+    console.log(locationBelgrave);
+
+    // const locationSussex = getRestaurantsNearOffice("Sussex");
+    // const locationJohn_Street = getRestaurantsNearOffice("John_Street");
+    // const res = await postLocationData(
+    //   clientDataBase,
+    //   "Belgrave",
+    //   locationBelgrave
+    // );
   } catch (error) {
     console.error(error);
   }
+  clientDataBase.close();
 });
 
 async function createLobby(location, host) {
@@ -94,3 +118,9 @@ async function inviteToLobby(channel_id, users) {
     console.error("Reason: " + err.data.error);
   }
 }
+
+// list of restaurant info based on that location.
+// save user ID if they're in a lobby, and remove the user ID if they have left the lobby.
+// split out the channel name and the place
+// location place-to-eat time
+// list view of the restaurant and detail view
