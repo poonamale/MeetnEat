@@ -4,8 +4,12 @@ import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
 import { getRestaurantsNearOffice } from "./interact_with_json";
-import { LOCATION_PROMPT } from "../user_interface/modals/LocationPrompt";
+import {
+  LOCATION_PROMPT,
+  BLOCK_JOIN_VIEW,
+} from "../user_interface/modals/LocationPrompt";
 
+import {} from "../user_interface/modals/joinView";
 const { App } = require("@slack/bolt");
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
@@ -17,9 +21,7 @@ const SlackBot = require("slackbots");
 //create single instance and connect to db
 const clientDataBase = new createClient();
 
-// Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
-
-// WebClient insantiates a client that can call API methods
+// WebClient instantiates a client that can call API methods
 // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
 const client = new WebClient(SLACK_OAUTH_TOKEN, {
   // LogLevel can be imported and used to make debugging simpler
@@ -161,6 +163,38 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
     console.log(result);
   } catch (error) {
     console.error(error);
+  }
+});
+
+app.action("action-for-join", async ({ body, ack, client }) => {
+  //RESTAURANT_NAME, ADDRESS, WALK_TIME, CUISINE, DIET, START_TIME, DURATION, IMG_URL
+  let RESTAURANT_NAME;
+  ADDRESS;
+  WALK_TIME;
+  CUISINE;
+  DIET;
+  START_TIME;
+  DURATION;
+  IMG_URL;
+  await ack();
+  try {
+    const result = await client.views.open({
+      trigger_id: body.trigger_id,
+      view: BLOCK_JOIN_VIEW(
+        RESTAURANT_NAME,
+        ADDRESS,
+        WALK_TIME,
+        CUISINE,
+        DIET,
+        START_TIME,
+        DURATION,
+        IMG_URL
+      ),
+    });
+
+    console.log(result);
+  } catch (err) {
+    console.error(err);
   }
 });
 
