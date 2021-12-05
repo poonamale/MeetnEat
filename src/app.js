@@ -13,9 +13,7 @@ const SlackBot = require("slackbots");
 //connect to db
 createConnection();
 
-// Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
-
-// WebClient insantiates a client that can call API methods
+// WebClient instantiates a client that can call API methods
 // When using Bolt, you can use either `app.client` or the `client` passed to listeners.
 const client = new WebClient(SLACK_OAUTH_TOKEN, {
   // LogLevel can be imported and used to make debugging simpler
