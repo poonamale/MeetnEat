@@ -56,6 +56,21 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
+<<<<<<< HEAD
+=======
+    const locationBelgrave = getRestaurantListForHostUI("Belgrave", "12:30", "60 Minutes");
+    const nameAndIDOfFoodPlace = [];
+    locationBelgrave.forEach((element, index) => {
+      nameAndIDOfFoodPlace.push({
+        text: {
+          type: "plain_text",
+          text: `${element.name}-${element.location_id}`,
+          emoji: true,
+        },
+        value: `value-${index}`,
+      });
+    });
+>>>>>>> main
     const result = await client.views.open({
       trigger_id: body.trigger_id,
       view: HOST_OPTIONS(),

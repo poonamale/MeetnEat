@@ -8,11 +8,11 @@ const offices = ["Belgrave", "Sussex", "John_Street"];
 function extractJson(filename) {
   return fs.readFileSync(filename, "utf8");
 }
-
-export function getRestaurantsNearOffice(office) {
+ //if exported, delete ../ ?
+function getRestaurantsNearOffice(office) {
   if (offices.includes(office)) {
     const restaurantsJson = extractJson(
-      `restaurant_api/assets/${office}_restaurants.json`
+      `../restaurant_api/assets/${office}_restaurants.json`
     );
     return JSON.parse(restaurantsJson).data;
   } else {
@@ -21,13 +21,16 @@ export function getRestaurantsNearOffice(office) {
 }
 
 // restaurant list to send to 'host' UI
+<<<<<<< HEAD
 export function getRestaurantListForHostUI(office, startTimeString, durationString) {
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_street
+=======
+function getRestaurantListForHostUI(office, startTimeString, durationString) {
+  const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
+>>>>>>> main
   const duration = durationString.split(" ")[0];
   const startHourByUser = startTimeString.split(":")[0];
-  console.log(startHourByUser);
   const startMinuteByUser = startTimeString.split(":")[1];
-  console.log(startMinuteByUser);
   const startTime = new Date(
     2021,
     11,
@@ -37,7 +40,6 @@ export function getRestaurantListForHostUI(office, startTimeString, durationStri
     0,
     0
   ).getTime();
-  console.log(startTime);
   const endTime = startTime + duration * 60000;
 
   let restaurantListForHostUI = [];
@@ -64,19 +66,20 @@ export function getRestaurantListForHostUI(office, startTimeString, durationStri
             address: restaurant.address,
             openTime: new Date(openTime).toTimeString(),
             closeTime: new Date(closeTime).toTimeString(),
-            distance: restaurant.distance_string,
             walkTime: walkTime,
             cuisine: restaurant.cuisine[0]
               ? restaurant.cuisine[0].name
               : "unknown",
-          };
+            photo: restaurant.photo.images.large.url,
+            dietaryRestrictions : restaurant.dietary_restrictions
+          }
           restaurantListForHostUI.push(info);
         }
       });
     }
   });
 
-  console.log(restaurantListForHostUI);
+//  console.log(restaurantListForHostUI);
   return restaurantListForHostUI;
 }
 
@@ -97,27 +100,38 @@ function convertTimeFromJson(jsonTime) {
 const userInputStartTime = "12:30";
 const userInputDuration = "60 Minutes";
 
-// getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration);
-
 // extract necessary info to send to 'join' UI + use for event
-function getRestaurantInfo(locationId, office) {
-  let restaurantInfo = {};
-  const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_street
+function getRestaurantInfo(locationNameAndId, office) {
+  const locationId = locationNameAndId.split("-")[1]
+  let restaurantInfo = {}
+  const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
   restaurants.forEach((restaurant) => {
     if (restaurant.location_id === locationId) {
-      restaurantInfo = restaurant;
+      restaurantInfo = restaurant
     }
   });
 
-  //    console.log(restaurantInfo)
+//  console.log(restaurantInfo)
   return restaurantInfo;
 }
 
-// getRestaurantInfo("11711161", "Belgrave");
+let eventList = []
 
 // Save event after user interaction to send it to mongoDB
-function createEvent(restaurantInfo, startTime, duration, host, channelId) {
-  const event = {
+function createEvent(restaurantInfo, startTimeString, durationString, host, channelId) {
+    const duration = durationString.split(" ")[0];
+    const startHourByUser = startTimeString.split(":")[0];
+    const startMinuteByUser = startTimeString.split(":")[1];
+    const startTime = new Date(
+      2021,
+      11,
+      6,
+      startHourByUser,
+      startMinuteByUser,
+      0,
+      0
+    ).getTime();
+    const event = {
     restaurantInfo: restaurantInfo,
     startTime: startTime,
     duration: duration,
@@ -126,16 +140,31 @@ function createEvent(restaurantInfo, startTime, duration, host, channelId) {
     channelId: channelId,
   };
 
-  return event;
+  eventList.push(event)
+//  return event;
 }
 
 // add new member to channel to send it to mongoDB
-function addMemberToChannel(memberId, channelId) {
-  const channelInfo = getChannelInfoById(channelId);
-  channelInfo.members.push(memberId);
-
-  return channelInfo;
+function addMemberToEvent(memberId, channelId) {
+  const eventInfo = getChannelInfoById(channelId);
+  eventInfo.event.members.push(memberId);
+  // replace old event with updated event with new member
+  eventList.splice(eventInfo.position, 1, eventInfo.event)
 }
 
-// TODO: get channel info from mongoDB
-function getChannelInfoById(channelId) {}
+// get channel info from eventList array
+function getChannelInfoById(channelId) {
+    let returnEvent = {}
+    eventList.forEach((event, index) => {
+        if (event.channelId === channelId) {
+            returnEvent = {event: event, position: index}
+        }
+    })
+    return returnEvent
+}
+
+// getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration);
+// const place = getRestaurantInfo("The Grosvenor Arms-11711161", "Belgrave");
+// createEvent(place, userInputStartTime, userInputDuration, "Bori", "someChannelId")
+// addMemberToEvent("Pedro", "someChannelId")
+// console.log(eventList)
