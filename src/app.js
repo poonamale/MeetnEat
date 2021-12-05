@@ -91,12 +91,12 @@ app.action("action-for-sussex", async ({ body, ack, client }) => {
   });
 });
 
-async function hostOrJoinOption(name) {
-  return {
-    blocks: BLOCK_INIT_VIEW(name),
-    text: "get loc",
-  };
-}
+// async function hostOrJoinOption(name) {
+//   return {
+//     blocks: BLOCK_INIT_VIEW(name),
+//     text: "get loc",
+//   };
+// }
 
 // app.action("action-for-sussex");
 // app.action("action-for-john");
@@ -105,20 +105,6 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   // Acknowledge the action
   await ack();
   try {
-    // Call the views.open method using the WebClient passed to listeners
-    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
-    const nameAndIDOfFoodPlace = [];
-    locationBelgrave.forEach((element, index) => {
-      nameAndIDOfFoodPlace.push({
-        text: {
-          type: "plain_text",
-          text: `${element.name}-${element.location_id}`,
-          emoji: true,
-        },
-        value: `value-${index}`,
-      });
-    });
-
     const result = await client.views.open({
       trigger_id: body.trigger_id,
       view: HOST_OPTIONS(),
