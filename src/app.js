@@ -3,13 +3,13 @@ import { BLOCK_INIT_VIEW } from "../user_interface/modals/InitialView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
-import { getRestaurantsNearOffice } from "./interact_with_json";
 import {
-  LOCATION_PROMPT,
-  BLOCK_JOIN_VIEW,
-} from "../user_interface/modals/LocationPrompt";
+  getRestaurantsNearOffice,
+  getRestaurantListForHostUI,
+} from "./interact_with_json";
+import { LOCATION_PROMPT } from "../user_interface/modals/LocationPrompt";
+import { BLOCK_JOIN_VIEW } from "../user_interface/modals/joinView";
 
-import {} from "../user_interface/modals/joinView";
 const { App } = require("@slack/bolt");
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
@@ -105,23 +105,22 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   await ack();
   try {
     // Call the views.open method using the WebClient passed to listeners
-    // const locationBelgrave = getRestaurantsNearOffice("Belgrave");
-    // const nameAndIDOfFoodPlace = [];
-    // locationBelgrave.forEach((element, index) => {
-    //   nameAndIDOfFoodPlace.push({
-    //     text: {
-    //       type: "plain_text",
-    //       text: `${element.name}-${element.location_id}`,
-    //       emoji: true,
-    //     },
-    //     value: `value-${index}`,
-    //   });
-    // });
+    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+    const nameAndIDOfFoodPlace = [];
+    locationBelgrave.forEach((element, index) => {
+      nameAndIDOfFoodPlace.push({
+        text: {
+          type: "plain_text",
+          text: `${element.name}-${element.location_id}`,
+          emoji: true,
+        },
+        value: `value-${index}`,
+      });
+    });
 
     const result = await client.views.open({
       trigger_id: body.trigger_id,
-      // HOST_OPTIONS(nameAndIDOfFoodPlace)
-      view: LOCATION_PROMPT(),
+      view: HOST_OPTIONS(nameAndIDOfFoodPlace),
     });
 
     console.log(locationBelgrave);
@@ -168,14 +167,21 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
 
 app.action("action-for-join", async ({ body, ack, client }) => {
   //RESTAURANT_NAME, ADDRESS, WALK_TIME, CUISINE, DIET, START_TIME, DURATION, IMG_URL
-  let RESTAURANT_NAME;
-  ADDRESS;
-  WALK_TIME;
-  CUISINE;
-  DIET;
-  START_TIME;
-  DURATION;
-  IMG_URL;
+  const listOfRestaurants = getRestaurantListForHostUI(
+    "Belgrave",
+    "12:00",
+    "60 Minutes"
+  );
+  console.log(listOfRestaurants);
+  let RESTAURANT_NAME = "data";
+  let ADDRESS = "data";
+  let WALK_TIME = "5 mins";
+  let CUISINE = "data";
+  let DIET = "data";
+  let START_TIME = "12:00";
+  let DURATION = "60 Minutes";
+  let IMG_URL =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe3EI2njATd0cZQW2BCaksACaJMzs3DKHqqdNqsgibGiapafU0LLuFy7mNx8i0ltnKlhc&usqp=CAU";
   await ack();
   try {
     const result = await client.views.open({
@@ -191,7 +197,6 @@ app.action("action-for-join", async ({ body, ack, client }) => {
         IMG_URL
       ),
     });
-
     console.log(result);
   } catch (err) {
     console.error(err);

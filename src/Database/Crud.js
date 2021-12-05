@@ -44,3 +44,15 @@ async function InsertOne(client, name, id, item) {
 export async function closeSession(client) {
   await client.close();
 }
+
+export async function AddEventToDB(client, event) {
+  try {
+    await client.connect();
+    client.db("MeetNEat").collection("events").insertOne(event);
+  } catch (e) {
+    // perform actions on the collection object
+    console.log("\n ------- mongodb error ----- \n");
+    console.error(e);
+    client.close();
+  }
+}
