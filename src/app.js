@@ -5,7 +5,7 @@ import { createConnection } from "./connectDB";
 import { BLOCK_JOIN_VIEW } from "../user_interface/modals/joinView";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
-import { getRestaurantsNearOffice } from "./interact_with_json";
+import { getRestaurantInfo, getRestaurantsNearOffice } from "./interact_with_json";
 
 const { App } = require("@slack/bolt");
 
@@ -87,15 +87,15 @@ app.action("action-for-host", async ({ body, ack, client }) => {
   }
 })
 
-app.action("action-for-join", async ({body, ack, client, locationNameAndId, office}) => {
-    var restaurant = getRestaurantInfo(locationNameAndId, office)
+app.action("action-for-join", async ({body, ack, client}) => {
+    var restaurant = getRestaurantInfo("The Grosvenor Arms-11711161", "Belgrave") //TODO: Grab locationnameandid & office from the lobby list/table
     let RESTAURANT_NAME = restaurant.name
      ADDRESS = restaurant.address
      WALK_TIME = restaurant.walkTime
-     CUISINE = restaurant.cuisine
+     CUISINE = restaurant.cuisine[0]
      DIET = restaurant.dietary_restrictions
-     START_TIME = getLobbyInfo().START_TIME
-     DURATION = getLobbyInfo().DURATION
+     START_TIME = "12:30 PM" //getLobbyInfo().START_TIME
+     DURATION = "90 Minutes" //getLobbyInfo().DURATION
      IMG_URL = restaurant.photo.images.large.url
     await ack()
     try {

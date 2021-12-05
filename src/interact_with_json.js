@@ -92,7 +92,7 @@ export function convertTimeFromJson(jsonTime) {
 }
 
 // extract necessary info to send to 'join' UI + use for event
-export function getRestaurantInfo(locationNameAndId, office) {
+export function getRestaurantInfo("The Grosvenor Arms-11711161", "Belgrave") {
   const locationId = locationNameAndId.split("-")[1]
   let restaurantInfo = {}
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
