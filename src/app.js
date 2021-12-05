@@ -63,15 +63,15 @@ app.action("action-for-host", async ({ body, ack, client }) => {
 })
 
 app.action("action-for-join", async ({body, ack, client}) => {
-    //RESTAURANT_NAME, ADDRESS, WALK_TIME, CUISINE, DIET, START_TIME, DURATION, IMG_URL
+    var restaurant = getRestaurantInfo(locationNameAndId, office)
     let RESTAURANT_NAME
-     ADDRESS
-     WALK_TIME
-     CUISINE
-     DIET
-     START_TIME
-     DURATION
-     IMG_URL
+     ADDRESS = restaurant.ADDRESS
+     WALK_TIME = restaurant.WALK_TIME
+     CUISINE = restaurant.CUISINE
+     DIET = restaurant.DIET
+     START_TIME = getLobbyInfo().START_TIME
+     DURATION = getLobbyInfo().DURATION
+     IMG_URL = restaurant.IMG_URL
     await ack()
     try {
         const result = await client.views.open({
