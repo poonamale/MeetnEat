@@ -98,8 +98,6 @@ function getRestaurantInfo(locationNameAndId, office) {
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
   restaurants.forEach((restaurant) => {
     if (restaurant.location_id === locationId) {
-        const d = new Date(2021, 11, 6, 12, 30, 0, 0);
-        const dayOfWeek = d.getDay();
         let walkTime = 0;
       if (restaurant.distance_string.split(" ")[1] === "ft") {
         walkTime = Math.ceil(restaurant.distance_string.split(" ")[0] / 264);
@@ -107,19 +105,10 @@ function getRestaurantInfo(locationNameAndId, office) {
         walkTime = Math.ceil(restaurant.distance_string.split(" ")[0] / 0.05);
       }
 
-      let openTime = ""
-      let closeTime = ""
-      restaurant.hours.week_ranges[dayOfWeek].forEach((open) => {
-        openTime += `${convertTimeFromJson(open.open_time).getHours()}:${convertTimeFromJson(open.open_time).getMinutes() === 0 ? '00' : convertTimeFromJson(open.open_time).getMinutes()}, `
-        closeTime += `${convertTimeFromJson(open.close_time).getHours()}:${convertTimeFromJson(open.open_time).getMinutes() === 0 ? '00' : convertTimeFromJson(open.open_time).getMinutes()}, `
-      })
-
       restaurantInfo = {
         locationId: restaurant.location_id,
         name: restaurant.name,
         address: restaurant.address,
-        openTime: openTime,
-        closeTime: closeTime,
         walkTime: walkTime,
         cuisine: restaurant.cuisine[0]
           ? restaurant.cuisine[0].name
