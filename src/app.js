@@ -2,6 +2,7 @@ import { SLACK_OAUTH_TOKEN, BOT_NAME, BOT_SPAM_CHANNEL } from "./constants";
 import { BLOCK_HOST_VIEW } from "../user_interface/modals/hostView";
 import { HOST_OPTIONS } from "../user_interface/modals/HostOptions";
 import { createConnection } from "./connectDB";
+import { BLOCK_JOIN_VIEW } from "../user_interface/modals/joinView";
 const { App } = require("@slack/bolt");
 
 // Require the Node Slack SDK package (github.com/slackapi/node-slack-sdk)
@@ -47,7 +48,7 @@ app.message("hello", async ({ message, say }) => {
 
 app.action("action-for-host", async ({ body, ack, client }) => {
   // Acknowledge the action
-  await ack();
+  await ack()
   try {
     // Call the views.open method using the WebClient passed to listeners
     const result = await client.views.open({
@@ -55,11 +56,34 @@ app.action("action-for-host", async ({ body, ack, client }) => {
       view: HOST_OPTIONS(),
     });
 
-    console.log(result);
+    console.log(result)
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
-});
+})
+
+app.action("action-for-join", async ({body, ack, client}) => {
+    //RESTAURANT_NAME, ADDRESS, WALK_TIME, CUISINE, DIET, START_TIME, DURATION, IMG_URL
+    let RESTAURANT_NAME
+     ADDRESS
+     WALK_TIME
+     CUISINE
+     DIET
+     START_TIME
+     DURATION
+     IMG_URL
+    await ack()
+    try {
+        const result = await client.views.open({
+            trigger_id: body.trigger_id,
+            view: BLOCK_JOIN_VIEW(RESTAURANT_NAME, ADDRESS, WALK_TIME, CUISINE, DIET, START_TIME, DURATION, IMG_URL),
+        })
+
+        console.log(result)
+    } catch (err) {
+        console.error(err)
+    }
+})
 
 async function createLobby(location, host) {
   location = location.toLowerCase();
