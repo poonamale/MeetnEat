@@ -17,8 +17,15 @@ function getRestaurantsNearOffice(office) {
 }
 
 // restaurant list to send to 'host' UI
-function getRestaurantListForHostUI(office, startTime, duration) {
+function getRestaurantListForHostUI(office, startTimeString, durationString) {
     const restaurants = getRestaurantsNearOffice(office) // options: Belgrave, Sussex, John_street
+    const duration = durationString.split(" ")[0]
+    const startHourByUser = startTimeString.split(":")[0]
+    console.log(startHourByUser)
+    const startMinuteByUser = startTimeString.split(":")[1]
+    console.log(startMinuteByUser)
+    const startTime = new Date(2021, 11, 6, startHourByUser, startMinuteByUser, 0, 0).getTime()
+    console.log(startTime);
     const endTime = startTime + duration * 60000
 
     let restaurantListForHostUI = []
@@ -56,7 +63,7 @@ function getRestaurantListForHostUI(office, startTime, duration) {
         }
     })
 
-//    console.log(restaurantListForHostUI)
+    console.log(restaurantListForHostUI)
     return restaurantListForHostUI
 }
 
@@ -64,7 +71,7 @@ function convertTimeFromJson(jsonTime) {
     const hour = Math.floor(jsonTime / 60)
     const minute = (jsonTime / 60 - hour) * 60
     // TODO: in live version, change the following to new Date() !!!!!!
-    const d = new Date(2021, 11, 6, 12, 30, 0, 0)
+    const d = new Date(2021, 11, 6, 3, 30, 0, 0)
     const year = d.getFullYear()
     const month = d.getMonth()
     const day = d.getDate()
@@ -74,8 +81,8 @@ function convertTimeFromJson(jsonTime) {
 
 // TODO: make changes when we know what data arrives from user
 // TODO: make this a function
-const userInputStartTime = new Date(2021, 11, 6, 12, 30, 0, 0).getTime()
-const userInputDuration = 60
+const userInputStartTime = "12:30"
+const userInputDuration = "60 Minutes"
 
 getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration)
 
@@ -89,7 +96,7 @@ function getRestaurantInfo (locationId, office) {
         }
     })
 
-    console.log(restaurantInfo)
+//    console.log(restaurantInfo)
     return restaurantInfo
 }
 
