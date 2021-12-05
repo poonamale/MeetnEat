@@ -31,20 +31,11 @@ export function HOST_OPTIONS() {
             text: "Select time",
             emoji: true,
           },
-<<<<<<< HEAD
-          action_id: "timepicker-action",
-        },
-        label: {
-          type: "plain_text",
-          text: "Select a Start Time",
-          emoji: true,
-=======
-          "label": {
-            "type": "plain_text",
-            "text": "Select a Start Time",
-            "emoji": true
-          }
->>>>>>> host-restaurant-view
+          label: {
+            type: "plain_text",
+            text: "Select a Start Time",
+            emoji: true,
+          },
         },
       },
       {
@@ -80,7 +71,6 @@ export function HOST_OPTIONS() {
                 text: "90 Minutes",
                 emoji: true,
               },
-<<<<<<< HEAD
               value: "value-2",
             },
           ],
@@ -95,25 +85,3 @@ export function HOST_OPTIONS() {
     ],
   };
 }
-=======
-              {
-                "text": {
-                  "type": "plain_text",
-                  "text": "90 Minutes",
-                  "emoji": true
-                },
-                "value": "value-2"
-              }
-            ],
-            "action_id": "static_select-action"
-          },
-          "label": {
-            "type": "plain_text",
-            "text": "Choose a Duration",
-            "emoji": true
-          }
-        }
-      ]
-    }
-}
->>>>>>> host-restaurant-view
