@@ -17,8 +17,15 @@ function getRestaurantsNearOffice(office) {
 }
 
 // restaurant list to send to 'host' UI
-function getRestaurantListForHostUI(office, startTime, duration) {
+function getRestaurantListForHostUI(office, startTimeString, durationString) {
     const restaurants = getRestaurantsNearOffice(office) // options: Belgrave, Sussex, John_street
+    const duration = durationString.split(" ")[0]
+    const startHourByUser = startTimeString.split(":")[0]
+    console.log(startHourByUser)
+    const startMinuteByUser = startTimeString.split(":")[1]
+    console.log(startMinuteByUser)
+    const startTime = new Date(2021, 11, 6, startHourByUser, startMinuteByUser, 0, 0).getTime()
+    console.log(startTime);
     const endTime = startTime + duration * 60000
 
     let restaurantListForHostUI = []
@@ -38,7 +45,7 @@ function getRestaurantListForHostUI(office, startTime, duration) {
                 const openTime = convertTimeFromJson(open.open_time).getTime()
                 const closeTime = convertTimeFromJson(open.close_time).getTime()
 
-                if (openTime <= startTime) {
+                if (openTime <= startTime && endTime <= closeTime) {
                     const info = {
                         locationId: restaurant.location_id, 
                         name: restaurant.name, 
@@ -57,12 +64,14 @@ function getRestaurantListForHostUI(office, startTime, duration) {
     })
 
     console.log(restaurantListForHostUI)
+    return restaurantListForHostUI
 }
 
 function convertTimeFromJson(jsonTime) {
     const hour = Math.floor(jsonTime / 60)
     const minute = (jsonTime / 60 - hour) * 60
-    const d = new Date(2021, 11, 6, 12, 30, 0, 0)
+    // TODO: in live version, change the following to new Date() !!!!!!
+    const d = new Date(2021, 11, 6, 3, 30, 0, 0)
     const year = d.getFullYear()
     const month = d.getMonth()
     const day = d.getDate()
@@ -72,22 +81,50 @@ function convertTimeFromJson(jsonTime) {
 
 // TODO: make changes when we know what data arrives from user
 // TODO: make this a function
-const userInputStartTime = new Date(2021, 11, 6, 12, 30, 0, 0).getTime()
-const userInputDuration = 60
+const userInputStartTime = "12:30"
+const userInputDuration = "60 Minutes"
 
 getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration)
 
-// TODO: extract necessary info to send to 'join' UI
-function getRestaurantInfo (locationId) {
+// extract necessary info to send to 'join' UI + use for event
+function getRestaurantInfo (locationId, office) {
     let restaurantInfo = {}
+    const restaurants = getRestaurantsNearOffice(office) // options: Belgrave, Sussex, John_street
+    restaurants.forEach(restaurant => {
+        if (restaurant.location_id === locationId) {
+            restaurantInfo = restaurant
+        }
+    })
 
+//    console.log(restaurantInfo)
+    return restaurantInfo
 }
 
+getRestaurantInfo('11711161', 'Belgrave')
 
+// Save event after user interaction to send it to mongoDB
+function createEvent(restaurantInfo, startTime, duration, host, channelId) {
+    const event = {
+        restaurantInfo: restaurantInfo,
+        startTime: startTime,
+        duration: duration,
+        host: host,
+        members: [],
+        channelId: channelId
+    }
 
-// TODO: Save event after user interaction to json file
-const events = []
+    return event
+}
 
-function createEvent (restaurantInfo, time, host, members, channelId) {
+// add new member to channel to send it to mongoDB
+function addMemberToChannel(memberId, channelId) {
+    const channelInfo = getChannelInfoById(channelId)
+    channelInfo.members.push(memberId)
+
+    return channelInfo
+}
+
+// TODO: get channel info from mongoDB
+function getChannelInfoById(channelId) {
     
 }
