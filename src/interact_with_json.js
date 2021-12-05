@@ -7,14 +7,20 @@ require.extensions['.json'] = function (module, filename) {
 
 const offices = ["Belgrave", "Sussex", "John_Street"]
 
-function getRestaurantsNearOffice(office) {
+function extractJson(filename) {
+    return fs.readFileSync(filename, "utf8");
+  }
+  
+  export function getRestaurantsNearOffice(office) {
     if (offices.includes(office)) {
-        restaurantsJson = require(`../restaurant_api/assets/${office}_restaurants.json`)
-        return JSON.parse(restaurantsJson).data
+      const restaurantsJson = extractJson(
+        `restaurant_api/assets/${office}_restaurants.json`
+      );
+      return JSON.parse(restaurantsJson).data;
     } else {
-        console.error("Office not included")
+      console.error("Office not included");
     }
-}
+  }
 
 // restaurant list to send to 'host' UI
 function getRestaurantListForHostUI(office, startTime, duration) {

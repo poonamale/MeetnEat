@@ -71,14 +71,74 @@ app.view('host_view_1', async ({ ack, body, view, context }) => {
   const selectedTime = view['state']['values']['time_input']['timepicker-action'];
   const selectedDuration = view['state']['values']['duration_input']['static_select-action'];
   const user = body['user']['id'];
-  
+
   //probably want to store these values somewhere
   console.log(selectedTime);
   console.log(selectedDuration);
-  console.log("user_id:",user);
+  console.log("user_id:", user);
 
   //Passing the host restaurant view after time and duration is stored
   try {
+    const locationBelgrave = getRestaurantsNearOffice("Belgrave");
+    const restaurantDetails = [];
+    locationBelgrave.forEach((element, index) => {
+      restaurantDetails.push({
+        "text": {
+          "type": "mrkdwn",
+          "text": ` ${element.name} \n*Share with another person*. Private walk-in bathroom. TV. Heating. Kitchen with microwave, basic cooking utensils, wine glasses and silverware.`
+        },
+        "accessory": {
+          "type": "image",
+          "image_url": "https://api.slack.com/img/blocks/bkb_template_images/Streamline-Beach.png",
+          "alt_text": "Airstream Suite"
+        }
+      },
+        {
+          "type": "context",
+          "elements": [
+            {
+              "type": "mrkdwn",
+              "text": "1x Queen Bed"
+            },
+            {
+              "type": "mrkdwn",
+              "text": "|"
+            },
+            {
+              "type": "mrkdwn",
+              "text": "$220 / night"
+            }
+          ]
+        },
+        {
+          "type": "actions",
+          "elements": [
+            {
+              "type": "button",
+              "text": {
+                "type": "plain_text",
+                "text": "Choose",
+                "emoji": true
+              },
+              "value": "click_me_123"
+            },
+            {
+              "type": "button",
+              "text": {
+                "type": "plain_text",
+                "text": "View Details",
+                "emoji": true
+              },
+              "value": "click_me_123"
+            }
+          ]
+        },
+        {
+          "type": "divider"
+        }
+      )
+    })
+
     const result = await client.views.open({
       trigger_id: body.trigger_id,
       view: HOST_RESTAURANT(),

@@ -82,64 +82,8 @@ export function HOST_RESTAURANT() {
                 },
                 {
                     "type": "divider"
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "*Redwood Suite*\n*Share with 2 other person*. Studio home. Modern bathroom. TV. Heating. Full kitchen. Patio with lounge chairs and campfire style fire pit and grill."
-                    },
-                    "accessory": {
-                        "type": "image",
-                        "image_url": "https://api.slack.com/img/blocks/bkb_template_images/redwoodcabin.png",
-                        "alt_text": "Redwood Suite"
-                    }
-                },
-                {
-                    "type": "context",
-                    "elements": [
-                        {
-                            "type": "mrkdwn",
-                            "text": "1x King Bed"
-                        },
-                        {
-                            "type": "mrkdwn",
-                            "text": "|"
-                        },
-                        {
-                            "type": "mrkdwn",
-                            "text": "$350 / night"
-                        }
-                    ]
-                },
-                {
-                    "type": "actions",
-                    "elements": [
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "✓ Your Choice",
-                                "emoji": true
-                            },
-                            "style": "primary",
-                            "value": "click_me_123"
-                        },
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "View Details",
-                                "emoji": true
-                            },
-                            "value": "click_me_123"
-                        }
-                    ]
-                },
-                {
-                    "type": "divider"
                 }
-            ] 
+            ]  
       }
   }
   
