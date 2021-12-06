@@ -9,7 +9,7 @@ function extractJson(filename) {
   return fs.readFileSync(filename, "utf8");
 }
  //if exported, delete ../ ?
-function getRestaurantsNearOffice(office) {
+export function getRestaurantsNearOffice(office) {
   if (offices.includes(office)) {
     const restaurantsJson = extractJson(
       `../restaurant_api/assets/${office}_restaurants.json`
@@ -21,7 +21,7 @@ function getRestaurantsNearOffice(office) {
 }
 
 // restaurant list to send to 'host' UI
-function getRestaurantListForHostUI(office, startTimeString, durationString) {
+export function getRestaurantListForHostUI(office, startTimeString, durationString) {
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
   const duration = durationString.split(" ")[0];
   const startHourByUser = startTimeString.split(":")[0];
@@ -66,7 +66,8 @@ function getRestaurantListForHostUI(office, startTimeString, durationString) {
               ? restaurant.cuisine[0].name
               : "unknown",
             photo: restaurant.photo.images.large.url,
-            dietaryRestrictions : restaurant.dietary_restrictions
+            dietaryRestrictions : restaurant.dietary_restrictions,
+            website: restaurant.website
           }
           restaurantListForHostUI.push(info);
         }
@@ -78,7 +79,7 @@ function getRestaurantListForHostUI(office, startTimeString, durationString) {
   return restaurantListForHostUI;
 }
 
-function convertTimeFromJson(jsonTime) {
+export function convertTimeFromJson(jsonTime) {
   const hour = Math.floor(jsonTime / 60);
   const minute = (jsonTime / 60 - hour) * 60;
   // TODO: in live version, change the following to new Date() !!!!!!
@@ -90,19 +91,32 @@ function convertTimeFromJson(jsonTime) {
   return t;
 }
 
-// TODO: make changes when we know what data arrives from user
-// TODO: make this a function
-const userInputStartTime = "12:30";
-const userInputDuration = "60 Minutes";
-
 // extract necessary info to send to 'join' UI + use for event
-function getRestaurantInfo(locationNameAndId, office) {
+export function getRestaurantInfo(locationNameAndId, office) {
   const locationId = locationNameAndId.split("-")[1]
   let restaurantInfo = {}
   const restaurants = getRestaurantsNearOffice(office); // options: Belgrave, Sussex, John_Street
   restaurants.forEach((restaurant) => {
     if (restaurant.location_id === locationId) {
-      restaurantInfo = restaurant
+        let walkTime = 0;
+      if (restaurant.distance_string.split(" ")[1] === "ft") {
+        walkTime = Math.ceil(restaurant.distance_string.split(" ")[0] / 264);
+      } else {
+        walkTime = Math.ceil(restaurant.distance_string.split(" ")[0] / 0.05);
+      }
+
+      restaurantInfo = {
+        locationId: restaurant.location_id,
+        name: restaurant.name,
+        address: restaurant.address,
+        walkTime: walkTime,
+        cuisine: restaurant.cuisine[0]
+          ? restaurant.cuisine[0].name
+          : "unknown",
+        photo: restaurant.photo.images.large.url,
+        dietaryRestrictions : restaurant.dietary_restrictions,
+        website: restaurant.website
+      }
     }
   });
 
@@ -113,7 +127,7 @@ function getRestaurantInfo(locationNameAndId, office) {
 let eventList = []
 
 // Save event after user interaction to send it to mongoDB
-function createEvent(restaurantInfo, startTimeString, durationString, host, channelId) {
+export function createEvent(restaurantInfo, startTimeString, durationString, host, channelId) {
     const duration = durationString.split(" ")[0];
     const startHourByUser = startTimeString.split(":")[0];
     const startMinuteByUser = startTimeString.split(":")[1];
@@ -140,7 +154,7 @@ function createEvent(restaurantInfo, startTimeString, durationString, host, chan
 }
 
 // add new member to channel to send it to mongoDB
-function addMemberToEvent(memberId, channelId) {
+export function addMemberToEvent(memberId, channelId) {
   const eventInfo = getChannelInfoById(channelId);
   eventInfo.event.members.push(memberId);
   // replace old event with updated event with new member
@@ -148,7 +162,7 @@ function addMemberToEvent(memberId, channelId) {
 }
 
 // get channel info from eventList array
-function getChannelInfoById(channelId) {
+export function getChannelInfoById(channelId) {
     let returnEvent = {}
     eventList.forEach((event, index) => {
         if (event.channelId === channelId) {
@@ -158,7 +172,11 @@ function getChannelInfoById(channelId) {
     return returnEvent
 }
 
+
+// const userInputStartTime = "12:30";
+// const userInputDuration = "60 Minutes";
 // getRestaurantListForHostUI("Belgrave", userInputStartTime, userInputDuration);
+console.log(getRestaurantInfo("The Grosvenor Arms-680359", "Belgrave"))
 // const place = getRestaurantInfo("The Grosvenor Arms-11711161", "Belgrave");
 // createEvent(place, userInputStartTime, userInputDuration, "Bori", "someChannelId")
 // addMemberToEvent("Pedro", "someChannelId")
