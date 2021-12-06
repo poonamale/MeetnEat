@@ -1,6 +1,7 @@
 export function HOST_RESTAURANT(restaurantDetails) {
     return {
             "type": "modal",
+            "callback_id": 'host_view_2',
             "title": {
                 "type": "plain_text",
                 "text": "Host a Lunch Meet",
