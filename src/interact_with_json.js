@@ -71,6 +71,7 @@ export function getRestaurantListForHostUI(
               : "unknown",
             photo: restaurant.photo.images.large.url,
             dietaryRestrictions: restaurant.dietary_restrictions,
+            website: restaurant.website
           };
           restaurantListForHostUI.push(info);
         }

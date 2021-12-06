@@ -44,7 +44,6 @@ const app = new App({
   console.log("⚡️ Bolt app is running!");
   var appHackTeam3 = "U02NLRLKX0X, U02NYD1G8TY, U02PW25QJ1W, U02PSK9CK5W";
   //createLobby('Sorry Final Test I Swear', appHackTeam3)
-  //sendMessage(general, "Would you like to Host or Join?")
 })();
 
 app.message("hello", async ({ message, say }) => {
@@ -157,6 +156,10 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
               type: "mrkdwn",
               text: `Cuisine: ${element.cuisine}`,
             },
+            {
+                type: "mrkdwn",
+                text: `<${element.website}| View Details>`
+            }
           ],
         },
         {
@@ -169,17 +172,9 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
                 text: "Choose",
                 emoji: true,
               },
-              value: `${index}`,
-            },
-            {
-              type: "button",
-              text: {
-                type: "plain_text",
-                text: "View Details",
-                emoji: true,
-              },
-              value: "click_me_123",
-            },
+              value: `${element.name}`,
+              action_id: "action-for-picked-restaurant"
+            }
           ],
         },
         {
@@ -194,11 +189,45 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
     });
 
     console.log(result);
-    console.log(allOpenRestaurants);
   } catch (error) {
     console.error(error);
   }
 });
+
+app.view("host_view_2", async ({ ack, body, view, context }) => {
+  // Acknowledge the view_submission event
+  ack();
+
+  // const selectedLocation =
+  //   view["state"]["values"]["time_input"]["timepicker-action"];
+  // const selectedDuration =
+  //   view["state"]["values"]["duration_input"]["static_select-action"];
+  const user = body["user"]["id"];
+
+  //probably want to store these values somewhere
+  //console.log(body);
+  console.log(view);
+  console.log("user_id:", user);
+})
+
+app.action("action-for-picked-restaurant", async ({ body, ack, client }) => {
+  // Acknowledge the action
+  await ack();
+  
+  const pickedLocation = body.actions[0].value;
+  const host = body.user.id
+  console.log(body)
+  console.log(pickedLocation)
+
+  try {
+
+    createLobby(pickedLocation, host)
+    
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 
 app.action("action-for-join", async ({ body, ack, client }) => {
   // Acknowledge the action
@@ -292,6 +321,18 @@ async function inviteToLobby(channel_id, users) {
     console.log("Unable to process the inviteToLobby request");
     console.error("Reason: " + err.data.error);
   }
+}
+
+  async function deleteLobby(channel_id) {
+    try {
+      const result = await client.conversations.close({
+        token: SLACK_OAUTH_TOKEN,
+        channel: channel_id,
+      });
+    } catch (err) {
+      console.log("Unable to process the inviteToLobby request");
+      console.error("Reason: " + err.data.error);
+    }
 }
 
 // list of restaurant info based on that location.
