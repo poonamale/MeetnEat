@@ -42,6 +42,7 @@ const app = new App({
   // Start your app
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
+  // Poonams ID - U02PSK9CK5W
   var appHackTeam3 = "U02NLRLKX0X, U02NYD1G8TY, U02PW25QJ1W, U02PSK9CK5W";
   //createLobby('Sorry Final Test I Swear', appHackTeam3)
 })();
@@ -223,6 +224,7 @@ app.action("action-for-picked-restaurant", async ({ body, ack, client }) => {
     // createLobby(pickedLocation, host);  ---- orignal method to be used in the demo
     let num = `${Math.random()}`.split(".")[1];
     let name = "test_string_" + `${num}`;
+
     console.log("name of the channel created:" + name);
     createLobby(name, host);
   } catch (error) {
@@ -307,12 +309,11 @@ async function createLobby(location, host) {
     console.log("Unable to process the createLobby request");
     console.error("Reason: " + err.data.error);
   }
-  inviteToLobby(channel_id, host);
+  inviteToLobby(channel_id, "U02PW25QJ1W");
+  inviteToLobby(channel_id, "U02PSK9CK5W");
 }
 
 async function inviteToLobby(channel_id, users) {
-  channel_id = "C02QB1XKLAC";
-  users = "U02NLRLKX0X, U02NYD1G8TY, U02PSK9CK5W";
   try {
     const result = await client.conversations.invite({
       token: SLACK_OAUTH_TOKEN,
