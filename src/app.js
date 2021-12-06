@@ -248,15 +248,15 @@ app.action("action-for-join", async ({ body, ack, client }) => {
 app.action("actionNext", async ({ body, ack, client }) => {
   await ack();
 
-  let restaurant = "Vegan Joint";
-  let address = "26 ping road";
-  let distance = "7 mins";
-  let cuisine = "International";
-  let diet = "Vegan Friendly";
-  let start = "12:45";
-  let duration = "60mins";
+  let restaurant = "Chucs Belgravia";
+  let address = "Address: 25 Eccleston Street Belgravia, London SW1W 9NP England";
+  let distance = "Walk Time: 2 mins";
+  let cuisine = "Cuisine: Italian";
+  let diet = "Diet: Vegan Friendly";
+  let start = "Start time: 12:00";
+  let duration = " Duration: 60mins";
   let img =
-    "https://assets3.thrillist.com/v1/image/1682388/size/tl-horizontal_main.jpg";
+    "https://media-cdn.tripadvisor.com/media/photo-w/1a/19/96/21/chucs-belgravia.jpg";
   try {
     const result = await client.views.update({
       view_id: body.view.root_view_id,
@@ -291,7 +291,7 @@ app.action("actionJoin", async ({ body, ack, client }) => {
 
   let num = `${Math.random()}`.split(".")[0];
 
-  await createLobby("belgrave-food-1230" + `${num}`, body.user.id);
+  await inviteToLobby(retrievedChannelID, "U02PW25QJ1W" );
 });
 
 async function createLobby(location, host) {
@@ -305,12 +305,13 @@ async function createLobby(location, host) {
     });
     console.log("channel id :" + result.response_metadata);
     channel_id = result.channel.id;
+    var retrievedChannelID = channel_id
   } catch (err) {
     console.log("Unable to process the createLobby request");
     console.error("Reason: " + err.data.error);
   }
-  inviteToLobby(channel_id, "U02PW25QJ1W");
-  inviteToLobby(channel_id, "U02PSK9CK5W");
+  inviteToLobby(channel_id, host);
+  return retrievedChannelID
 }
 
 async function inviteToLobby(channel_id, users) {

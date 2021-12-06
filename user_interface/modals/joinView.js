@@ -149,7 +149,7 @@ export function BLOCK_JOIN_VIEW() {
             type: "button",
             text: {
               type: "plain_text",
-              text: "Yeah",
+              text: "Yes!",
               emoji: true,
             },
             style: "primary",
@@ -160,7 +160,7 @@ export function BLOCK_JOIN_VIEW() {
             type: "button",
             text: {
               type: "plain_text",
-              text: "Nah",
+              text: "No",
               emoji: true,
             },
             style: "danger",

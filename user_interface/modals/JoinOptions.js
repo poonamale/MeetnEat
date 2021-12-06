@@ -13,7 +13,7 @@ export function JOIN_OPTIONS(
     callback_id: "host_view_1",
     title: {
       type: "plain_text",
-      text: "join session",
+      text: "Join a Lunch Meet",
       emoji: true,
     },
     blocks: [
@@ -74,7 +74,7 @@ export function JOIN_OPTIONS(
             type: "button",
             text: {
               type: "plain_text",
-              text: "Yeah",
+              text: "Yes!",
               emoji: true,
             },
             style: "primary",
@@ -85,7 +85,7 @@ export function JOIN_OPTIONS(
             type: "button",
             text: {
               type: "plain_text",
-              text: "Nah",
+              text: "No",
               emoji: true,
             },
             style: "danger",
