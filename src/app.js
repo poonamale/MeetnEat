@@ -5,6 +5,7 @@ import { JOIN_OPTIONS } from "../user_interface/modals/JoinOptions";
 import { HOST_RESTAURANT } from "../user_interface/modals/HostRestaurant";
 import { createClient } from "./Database/connectDB";
 import { postLocationData, closeSession } from "./Database/Crud";
+import { insertOneNewChannel } from "./Database/Crud";
 import {
   getRestaurantsNearOffice,
   getRestaurantListForHostUI,
@@ -290,8 +291,6 @@ app.action("actionJoin", async ({ body, ack, client }) => {
   await ack();
 
   let num = `${Math.random()}`.split(".")[0];
-
-  await createLobby("belgrave-food-1230" + `${num}`, body.user.id);
 });
 
 async function createLobby(location, host) {
@@ -309,8 +308,8 @@ async function createLobby(location, host) {
     console.log("Unable to process the createLobby request");
     console.error("Reason: " + err.data.error);
   }
+  insertOneNewChannel(clientDataBase, channel_id);
   inviteToLobby(channel_id, "U02PW25QJ1W");
-  inviteToLobby(channel_id, "U02PSK9CK5W");
 }
 
 async function inviteToLobby(channel_id, users) {
