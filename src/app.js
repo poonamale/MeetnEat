@@ -157,9 +157,9 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
               text: `Cuisine: ${element.cuisine}`,
             },
             {
-                type: "mrkdwn",
-                text: `<${element.website}| View Details>`
-            }
+              type: "mrkdwn",
+              text: `<${element.website}| View Details>`,
+            },
           ],
         },
         {
@@ -173,8 +173,8 @@ app.view("host_view_1", async ({ ack, body, view, context }) => {
                 emoji: true,
               },
               value: `${element.name}`,
-              action_id: "action-for-picked-restaurant"
-            }
+              action_id: "action-for-picked-restaurant",
+            },
           ],
         },
         {
@@ -208,26 +208,27 @@ app.view("host_view_2", async ({ ack, body, view, context }) => {
   //console.log(body);
   console.log(view);
   console.log("user_id:", user);
-})
+});
 
 app.action("action-for-picked-restaurant", async ({ body, ack, client }) => {
   // Acknowledge the action
   await ack();
-  
+
   const pickedLocation = body.actions[0].value;
-  const host = body.user.id
-  console.log(body)
-  console.log(pickedLocation)
+  const host = body.user.id;
+  console.log(body);
+  console.log(pickedLocation);
 
   try {
-
-    createLobby(pickedLocation, host)
-    
+    // createLobby(pickedLocation, host);  ---- orignal method to be used in the demo
+    let num = `${Math.random()}`.split(".")[1];
+    let name = "test_string_" + `${num}`;
+    console.log("name of the channel created:" + name);
+    createLobby(name, host);
   } catch (error) {
     console.error(error);
   }
 });
-
 
 app.action("action-for-join", async ({ body, ack, client }) => {
   // Acknowledge the action
@@ -306,11 +307,12 @@ async function createLobby(location, host) {
     console.log("Unable to process the createLobby request");
     console.error("Reason: " + err.data.error);
   }
-
   inviteToLobby(channel_id, host);
 }
 
 async function inviteToLobby(channel_id, users) {
+  channel_id = "C02QB1XKLAC";
+  users = "U02NLRLKX0X, U02NYD1G8TY, U02PSK9CK5W";
   try {
     const result = await client.conversations.invite({
       token: SLACK_OAUTH_TOKEN,
@@ -323,16 +325,16 @@ async function inviteToLobby(channel_id, users) {
   }
 }
 
-  async function deleteLobby(channel_id) {
-    try {
-      const result = await client.conversations.close({
-        token: SLACK_OAUTH_TOKEN,
-        channel: channel_id,
-      });
-    } catch (err) {
-      console.log("Unable to process the inviteToLobby request");
-      console.error("Reason: " + err.data.error);
-    }
+async function deleteLobby(channel_id) {
+  try {
+    const result = await client.conversations.close({
+      token: SLACK_OAUTH_TOKEN,
+      channel: channel_id,
+    });
+  } catch (err) {
+    console.log("Unable to process the inviteToLobby request");
+    console.error("Reason: " + err.data.error);
+  }
 }
 
 // list of restaurant info based on that location.
