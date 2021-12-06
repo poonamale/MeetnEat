@@ -58,13 +58,15 @@ export async function AddEventToDB(client, event) {
 }
 
 export async function insertOneNewChannel(client, channel_id) {
-  const query = { _id: "demo", payload: { saved_channel_id: channel_id } };
+  const query = { _id: "demo" };
+  const update = { $set: { channel: channel_id } };
+  const options = { upsert: true };
   try {
     await client.connect();
     await client
       .db("MeetNEat")
       .collection("channels_id")
-      .insertOne(query, update);
+      .updateOne(query, update, options);
   } catch (e) {
     console.log("\n ------- mongodb error ----- \n");
     console.error(e);
@@ -73,14 +75,18 @@ export async function insertOneNewChannel(client, channel_id) {
 }
 
 export async function readOneChannel(client) {
+  let response;
   try {
     let result = await client.connect();
-    await client.db("MeetNEat").collection("channels_id").find();
-    console.log("channel id found in db is " + result);
+    response = await client
+      .db("MeetNEat")
+      .collection("channels_id")
+      .findOne({ _id: "demo" });
+    console.log("channel id found in db is " + response);
   } catch (e) {
     console.log("\n ------- mongodb error ----- \n");
     console.error(e);
     await client.close();
   }
-  return result;
+  return response;
 }
